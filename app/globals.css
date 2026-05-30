@@ -1,26 +1,53 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Palette */
+  --color-sumi: #111111;
+  --color-slate: #3a3a38;
+  --color-stone: #6e6a64;
+  --color-ash: #a8a39a;
+  --color-linen: #d8d2c7;
+  --color-paper: #f2ede4;
+  --color-white: #f7f3eb;
+  --color-bg: #efeae1;
+  --color-seal: #7a2a20;
+
+  /* Fonts — vars injected on <html> by next/font */
+  --font-display: var(--font-noto-display);
+  --font-body: var(--font-noto-body);
+  --font-mono: var(--font-noto-mono);
+  --font-cjk: 'Noto Serif SC', 'Noto Serif', Georgia, serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--color-bg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-sumi);
+  font-family: var(--font-body), Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Applied to any element that must render CJK strokes through Noto Serif SC */
+.cjk {
+  font-family: var(--font-cjk);
+}
+
+@keyframes mulanMarquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes mulanSlide {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes mulanFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
