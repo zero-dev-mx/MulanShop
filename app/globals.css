@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  /* Palette */
+  /* Palette — neutral surgical white */
   --color-sumi: #111111;
-  --color-slate: #3a3a38;
-  --color-stone: #6e6a64;
-  --color-ash: #a8a39a;
-  --color-linen: #d8d2c7;
-  --color-paper: #f2ede4;
-  --color-white: #f7f3eb;
-  --color-bg: #efeae1;
-  --color-seal: #7a2a20;
+  --color-slate: #383838;
+  --color-stone: #6B6B6B;
+  --color-ash: #A8A8A8;
+  --color-linen: #ECECEC;
+  --color-paper: #FFFFFF;
+  --color-white: #FFFFFF;
+  --color-bg: #FFFFFF;
+  --color-seal: #7A2A20;
 
   /* Fonts — vars injected on <html> by next/font */
   --font-display: var(--font-noto-display);
@@ -20,11 +20,11 @@
 }
 
 html {
-  background: var(--color-bg);
+  background: var(--mulan-bg, var(--color-bg));
 }
 
 body {
-  background: var(--color-bg);
+  background: var(--mulan-bg, var(--color-bg));
   color: var(--color-sumi);
   font-family: var(--font-body), Georgia, serif;
   -webkit-font-smoothing: antialiased;

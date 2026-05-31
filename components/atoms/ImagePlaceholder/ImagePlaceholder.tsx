@@ -23,9 +23,9 @@ export default function ImagePlaceholder({
   children,
 }: ImagePlaceholderProps) {
   const isDark = tone === 'dark';
-  const bg = isDark ? '#3a3a38' : '#d8d2c7';
+  const bg = isDark ? '#383838' : '#ECECEC';
   const stripe = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(46,41,39,0.05)';
-  const txt = isDark ? '#d8d2c7' : '#6e6a64';
+  const txt = isDark ? '#ECECEC' : '#6B6B6B';
   const isAuto = ratio === 'auto';
 
   return (
@@ -69,7 +69,7 @@ export default function ImagePlaceholder({
         <div style={{ position: 'absolute', top: 14, right: 14 }}>
           <Seal
             size={28}
-            color={isDark || src ? '#f7f3eb' : '#111111'}
+            color={isDark || src ? '#FFFFFF' : '#111111'}
             bg="transparent"
             char={sealChar}
           />

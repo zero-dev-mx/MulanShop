@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTweaks } from '@/context/TweaksContext';
-import type { HeroVariant, LogoVariant, Density } from '@/context/TweaksContext';
+import type { HeroVariant, LogoVariant, Density, PageBg } from '@/context/TweaksContext';
 
 export default function TweaksPanel() {
   const { tweaks, setTweak } = useTweaks();
@@ -148,6 +148,17 @@ export default function TweaksPanel() {
               options={[
                 { value: 'loose',   label: 'Amplio' },
                 { value: 'compact', label: 'Compacto' },
+              ]}
+            />
+
+            <TweakSection label="Fondo" />
+            <TweakRadio
+              label="Color de página"
+              value={tweaks.pageBg}
+              onChange={v => setTweak('pageBg', v as PageBg)}
+              options={[
+                { value: 'white', label: 'Blanco' },
+                { value: 'warm',  label: 'Lino cálido' },
               ]}
             />
           </div>

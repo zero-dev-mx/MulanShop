@@ -5,17 +5,20 @@ import { createContext, useContext, useEffect, useState } from 'react';
 export type HeroVariant = 'A' | 'B' | 'C';
 export type LogoVariant = 'wordmark' | 'monogram' | 'seal';
 export type Density = 'loose' | 'compact';
+export type PageBg = 'white' | 'warm';
 
 export interface Tweaks {
   heroVariant: HeroVariant;
   logoVariant: LogoVariant;
   density: Density;
+  pageBg: PageBg;
 }
 
 const DEFAULTS: Tweaks = {
   heroVariant: 'C',
   logoVariant: 'wordmark',
   density: 'loose',
+  pageBg: 'white',
 };
 
 const STORAGE_KEY = 'mulan-tweaks';
@@ -38,6 +41,13 @@ export function TweaksProvider({ children }: { children: React.ReactNode }) {
       // ignore
     }
   }, []);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--mulan-bg',
+      tweaks.pageBg === 'white' ? '#FFFFFF' : '#EFEAE1'
+    );
+  }, [tweaks.pageBg]);
 
   function setTweak<K extends keyof Tweaks>(key: K, value: Tweaks[K]) {
     setTweaks(prev => {
