@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { MULAN_PRODUCTS } from '@/lib/products';
+import { getAllProducts, getProductByHandle, getProductsByCollection } from '@/lib/queries';
 import ProductTemplate from '@/components/templates/ProductTemplate/ProductTemplate';
 
 interface Props {
@@ -8,22 +8,31 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  return MULAN_PRODUCTS.map(p => ({ id: p.id }));
+  const products = await getAllProducts();
+  return products.map(p => ({ id: p.handle }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const product = MULAN_PRODUCTS.find(p => p.id === id);
+  const product = await getProductByHandle(id);
   if (!product) return {};
   return {
-    title: `${product.name} · Mulán`,
+    title: `${product.title} · Mulán`,
     description: product.description,
   };
 }
 
 export default async function ProductoPage({ params }: Props) {
   const { id } = await params;
-  const product = MULAN_PRODUCTS.find(p => p.id === id);
+  const product = await getProductByHandle(id);
   if (!product) notFound();
-  return <ProductTemplate productId={id} />;
+
+  const categoryHandle = product.collections.edges[0]?.node.handle;
+  const related = categoryHandle
+    ? (await getProductsByCollection(categoryHandle))
+        .filter(p => p.handle !== product.handle)
+        .slice(0, 4)
+    : [];
+
+  return <ProductTemplate product={product} related={related} />;
 }

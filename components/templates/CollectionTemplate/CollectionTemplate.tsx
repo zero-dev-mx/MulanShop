@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { MULAN_PRODUCTS, MULAN_CATEGORIES } from '@/lib/products';
+import { MULAN_CATEGORIES } from '@/lib/products';
+import type { ShopifyProduct } from '@/lib/shopify';
 import { useTweaks } from '@/context/TweaksContext';
 import ProductCard from '@/components/molecules/ProductCard/ProductCard';
 import VerticalEyebrow from '@/components/atoms/VerticalEyebrow/VerticalEyebrow';
@@ -11,7 +12,11 @@ import VerticalEyebrow from '@/components/atoms/VerticalEyebrow/VerticalEyebrow'
 type SortKey = 'curado' | 'asc' | 'desc';
 type CatFilter = 'todo' | 'deportivo' | 'playa' | 'vestidos';
 
-export default function CollectionTemplate() {
+interface CollectionTemplateProps {
+  products: ShopifyProduct[];
+}
+
+export default function CollectionTemplate({ products }: CollectionTemplateProps) {
   const searchParams = useSearchParams();
   const initialCat = (searchParams.get('cat') as CatFilter | null) ?? 'todo';
 
@@ -21,10 +26,14 @@ export default function CollectionTemplate() {
   const { density } = tweaks;
   const compact = density === 'compact';
 
-  let products = MULAN_PRODUCTS;
-  if (activeCat !== 'todo') products = products.filter(p => p.category === activeCat);
-  if (sort === 'asc')  products = [...products].sort((a, b) => a.price - b.price);
-  if (sort === 'desc') products = [...products].sort((a, b) => b.price - a.price);
+  let displayed = products;
+  if (activeCat !== 'todo') {
+    displayed = products.filter(p =>
+      p.collections.edges.some(e => e.node.handle === activeCat)
+    );
+  }
+  if (sort === 'asc')  displayed = [...displayed].sort((a, b) => parseFloat(a.priceRange.minVariantPrice.amount) - parseFloat(b.priceRange.minVariantPrice.amount));
+  if (sort === 'desc') displayed = [...displayed].sort((a, b) => parseFloat(b.priceRange.minVariantPrice.amount) - parseFloat(a.priceRange.minVariantPrice.amount));
 
   const activeCatObj = MULAN_CATEGORIES.find(c => c.id === activeCat);
 
@@ -55,10 +64,10 @@ export default function CollectionTemplate() {
           </h1>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-end sm:gap-6">
             <p className="m-0 font-body italic text-[16px] text-slate max-w-[420px]">
-              {activeCatObj ? activeCatObj.blurb + ' Doce piezas en total — lote actual.' : 'Doce piezas, hechas a mano en CDMX. Cuando se acaben, se acaban.'}
+              {activeCatObj ? activeCatObj.blurb + ' Lote actual.' : 'Doce piezas, hechas a mano en CDMX. Cuando se acaben, se acaban.'}
             </p>
             <div className="font-mono text-[11px] tracking-[0.22em] uppercase text-stone shrink-0">
-              {products.length} pieza{products.length === 1 ? '' : 's'} · Lote 04
+              {displayed.length} pieza{displayed.length === 1 ? '' : 's'} · Lote 04
             </div>
           </div>
         </div>
@@ -84,7 +93,7 @@ export default function CollectionTemplate() {
 
           <div className="flex gap-3 items-center font-mono text-[10.5px] tracking-[0.22em] uppercase text-slate md:gap-[18px]">
             <span className="text-stone hidden sm:inline">Orden</span>
-            {([{ id: 'curado', label: 'Curado' }, { id: 'asc', label: '↑' }, { id: 'desc', label: '↓' }] as { id: SortKey; label: string }[]).map(s => (
+            {([{ id: 'curado', label: 'Curado' }, { id: 'asc', label: 'Precio ↑' }, { id: 'desc', label: 'Precio ↓' }] as { id: SortKey; label: string }[]).map(s => (
               <button
                 key={s.id}
                 onClick={() => setSort(s.id)}
@@ -92,8 +101,7 @@ export default function CollectionTemplate() {
                   sort === s.id ? 'text-sumi border-b border-sumi' : 'text-slate border-b border-transparent'
                 }`}
               >
-                <span className="sm:hidden">{s.id === 'curado' ? 'Curado' : s.id === 'asc' ? 'Precio ↑' : 'Precio ↓'}</span>
-                <span className="hidden sm:inline">{s.id === 'curado' ? 'Curado' : s.id === 'asc' ? 'Precio ↑' : 'Precio ↓'}</span>
+                {s.label}
               </button>
             ))}
           </div>
@@ -109,8 +117,8 @@ export default function CollectionTemplate() {
               ? 'gap-x-4 gap-y-8 lg:grid-cols-4'
               : 'gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-16'
           }`}>
-            {products.map((p, i) => (
-              <div key={p.id} className="relative">
+            {displayed.map((p, i) => (
+              <div key={p.handle} className="relative">
                 <div className="absolute -top-2 -left-0.5 z-[1] font-mono text-[10px] tracking-[0.18em] text-stone">
                   {String(i + 1).padStart(2, '0')}
                 </div>
@@ -118,7 +126,7 @@ export default function CollectionTemplate() {
               </div>
             ))}
           </div>
-          {products.length === 0 && (
+          {displayed.length === 0 && (
             <div className="text-center py-20 font-body italic text-stone text-[16px]">
               No hay piezas en esta categoría todavía.
             </div>

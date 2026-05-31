@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { useTweaks } from '@/context/TweaksContext';
-import { MULAN_PRODUCTS, MULAN_CATEGORIES } from '@/lib/products';
+import { MULAN_CATEGORIES } from '@/lib/products';
+import type { ShopifyProduct } from '@/lib/shopify';
 import HeroEditorial from '@/components/organisms/Hero/HeroEditorial';
 import HeroSplit from '@/components/organisms/Hero/HeroSplit';
 import HeroArchitectural from '@/components/organisms/Hero/HeroArchitectural';
@@ -13,11 +14,14 @@ import VerticalEyebrow from '@/components/atoms/VerticalEyebrow/VerticalEyebrow'
 import Seal from '@/components/atoms/Seal/Seal';
 import NewsletterForm from '@/components/molecules/NewsletterForm/NewsletterForm';
 
-export default function HomeTemplate() {
+interface HomeTemplateProps {
+  featuredProducts: ShopifyProduct[];
+}
+
+export default function HomeTemplate({ featuredProducts }: HomeTemplateProps) {
   const { tweaks } = useTweaks();
   const { heroVariant, density } = tweaks;
   const compact = density === 'compact';
-  const featured = MULAN_PRODUCTS.slice(0, 4);
 
   return (
     <main>
@@ -114,9 +118,9 @@ export default function HomeTemplate() {
       <section className="px-5 py-16 relative md:px-12 md:pt-20 md:pb-10">
         <VerticalEyebrow side="left" top={80}>03 · Selección</VerticalEyebrow>
         <div className="max-w-[1280px] mx-auto">
-          <SectionHeader eyebrow="Lote actual" title="Lo último del taller" side="Cuatro piezas que nos gusta llevar puestas" count={featured.length} />
+          <SectionHeader eyebrow="Lote actual" title="Lo último del taller" side="Cuatro piezas que nos gusta llevar puestas" count={featuredProducts.length} />
           <div className={`grid grid-cols-2 lg:grid-cols-4 ${compact ? 'gap-4' : 'gap-x-6 gap-y-10'}`}>
-            {featured.map(p => <ProductCard key={p.id} product={p} density={density} />)}
+            {featuredProducts.map(p => <ProductCard key={p.handle} product={p} density={density} />)}
           </div>
           <div className="text-center mt-14">
             <Link href="/tienda" className="font-mono text-[11px] tracking-[0.28em] uppercase text-sumi no-underline border-b border-sumi pb-1">

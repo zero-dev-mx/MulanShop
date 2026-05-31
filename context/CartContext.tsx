@@ -1,34 +1,65 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
-import type { CartItem } from '@/lib/products';
+import { createContext, useContext, useState, useCallback } from 'react';
+import { cartCreate, cartLinesAdd, cartLinesRemove } from '@/lib/queries';
+import type { ShopifyCart } from '@/lib/shopify';
 
 interface CartContextValue {
-  items: CartItem[];
+  cart: ShopifyCart | null;
   isOpen: boolean;
-  addToCart: (item: CartItem) => void;
-  removeFromCart: (index: number) => void;
+  loading: boolean;
+  addToCart: (variantId: string, quantity?: number) => Promise<void>;
+  removeFromCart: (lineId: string) => Promise<void>;
   openCart: () => void;
   closeCart: () => void;
+  checkoutUrl: string | null;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<ShopifyCart | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  function addToCart(item: CartItem) {
-    setItems(prev => [...prev, item]);
-    setIsOpen(true);
-  }
+  const addToCart = useCallback(async (variantId: string, quantity = 1) => {
+    setLoading(true);
+    try {
+      let updated: ShopifyCart;
+      if (!cart) {
+        updated = await cartCreate(variantId, quantity);
+      } else {
+        updated = await cartLinesAdd(cart.id, variantId, quantity);
+      }
+      setCart(updated);
+      setIsOpen(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [cart]);
 
-  function removeFromCart(index: number) {
-    setItems(prev => prev.filter((_, i) => i !== index));
-  }
+  const removeFromCart = useCallback(async (lineId: string) => {
+    if (!cart) return;
+    setLoading(true);
+    try {
+      const updated = await cartLinesRemove(cart.id, [lineId]);
+      setCart(updated);
+    } finally {
+      setLoading(false);
+    }
+  }, [cart]);
 
   return (
-    <CartContext.Provider value={{ items, isOpen, addToCart, removeFromCart, openCart: () => setIsOpen(true), closeCart: () => setIsOpen(false) }}>
+    <CartContext.Provider value={{
+      cart,
+      isOpen,
+      loading,
+      addToCart,
+      removeFromCart,
+      openCart: () => setIsOpen(true),
+      closeCart: () => setIsOpen(false),
+      checkoutUrl: cart?.checkoutUrl ?? null,
+    }}>
       {children}
     </CartContext.Provider>
   );

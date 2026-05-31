@@ -7,9 +7,9 @@ import { useCart } from '@/context/CartContext';
 import { useTweaks } from '@/context/TweaksContext';
 
 export default function Header() {
-  const { items, openCart } = useCart();
+  const { cart, openCart } = useCart();
   const { tweaks } = useTweaks();
-  const cartCount = items.length;
+  const cartCount = cart?.lines.edges.length ?? 0;
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const cartBadge = (size: number) => (
