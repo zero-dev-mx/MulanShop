@@ -28,6 +28,7 @@ export default function Header() {
           <Link href="/tienda?cat=deportivo" className="text-slate no-underline hover:text-sumi transition-colors">Deportivo</Link>
           <Link href="/tienda?cat=playa"     className="text-slate no-underline hover:text-sumi transition-colors">Playa</Link>
           <Link href="/tienda?cat=vestidos"  className="text-slate no-underline hover:text-sumi transition-colors">Vestidos &amp; Sets</Link>
+          <Link href="/nosotras"            className="text-slate no-underline hover:text-sumi transition-colors">Nosotras</Link>
         </nav>
 
         <div className="flex justify-center">
@@ -86,6 +87,7 @@ export default function Header() {
             { href: '/tienda?cat=deportivo', label: 'Deportivo' },
             { href: '/tienda?cat=playa',     label: 'Playa' },
             { href: '/tienda?cat=vestidos',  label: 'Vestidos & Sets' },
+            { href: '/nosotras',             label: 'Nosotras' },
           ].map(({ href, label }) => (
             <Link
               key={href}

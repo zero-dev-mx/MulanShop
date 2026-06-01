@@ -54,7 +54,7 @@ export default function ImagePlaceholder({
         <div
           style={{
             position: 'absolute',
-            bottom: 12,
+            top: 12,
             left: 14,
             fontFamily: 'var(--font-mono)',
             fontSize: 9.5,
