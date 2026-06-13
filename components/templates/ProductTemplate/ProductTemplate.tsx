@@ -2,8 +2,8 @@
 
 import { useRef, useState } from 'react';
 import Link from 'next/link';
-import { MULAN_PRODUCTS, formatMXN } from '@/lib/products';
-import type { Product } from '@/lib/products';
+import { formatMXN } from '@/lib/products';
+import type { ShopifyProduct } from '@/lib/shopify';
 import { useTweaks } from '@/context/TweaksContext';
 import { useCart } from '@/context/CartContext';
 import ImagePlaceholder from '@/components/atoms/ImagePlaceholder/ImagePlaceholder';
@@ -14,61 +14,57 @@ import Button from '@/components/atoms/Button/Button';
 import Seal from '@/components/atoms/Seal/Seal';
 
 interface ProductTemplateProps {
-  productId: string;
+  product: ShopifyProduct;
+  related: ShopifyProduct[];
 }
 
-const DETAIL_IMAGES = [
-  '/products/detail-1.jpg',
-  '/products/detail-2.jpg',
-  '/products/detail-3.jpg',
-];
-
-const CATEGORY_CJK: Record<Product['category'], string> = {
+const CATEGORY_CJK: Record<string, string> = {
   vestidos: '夜',
   playa: '海',
   deportivo: '動',
 };
 
-export default function ProductTemplate({ productId }: ProductTemplateProps) {
-  const product = MULAN_PRODUCTS.find(p => p.id === productId) ?? MULAN_PRODUCTS[0];
+export default function ProductTemplate({ product, related }: ProductTemplateProps) {
   const { tweaks } = useTweaks();
-  const { addToCart } = useCart();
+  const { addToCart, loading } = useCart();
 
   const [size, setSize] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
   const [openSection, setOpenSection] = useState<string | null>('descripcion');
   const sizeRowRef = useRef<HTMLDivElement>(null);
 
-  const related = MULAN_PRODUCTS.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+  const variants = product.variants.edges.map(e => e.node);
+  const selectedVariant = variants.find(v => v.title === size);
+  const categoryHandle = product.collections.edges[0]?.node.handle ?? '';
+  const categoryCjk = CATEGORY_CJK[categoryHandle] ?? '木';
+  const displayPrice = selectedVariant
+    ? formatMXN(selectedVariant.price.amount)
+    : formatMXN(product.priceRange.minVariantPrice.amount);
 
-  const images = product.image
-    ? [
-        { label: product.label, tone: 'light' as const, char: '木', src: product.image },
-        { label: 'DETALLE',     tone: 'dark'  as const, char: '兰', src: DETAIL_IMAGES[0] },
-        { label: 'EN USO',      tone: 'light' as const, char: '木', src: DETAIL_IMAGES[1] },
-        { label: 'DETALLE 2',   tone: 'light' as const, char: '木', src: DETAIL_IMAGES[2] },
-      ]
-    : [
-        { label: product.label, tone: 'light' as const, char: '木', src: null },
-        { label: 'DETALLE',     tone: 'dark'  as const, char: '兰', src: null },
-        { label: 'EN USO',      tone: 'light' as const, char: '木', src: null },
-        { label: 'DETALLE 2',   tone: 'light' as const, char: '木', src: null },
-      ];
+  const images: { label: string; tone: 'light' | 'dark'; char: string; src: string | null }[] = product.images.edges.map((e, i) => ({
+    label: i === 0 ? (product.productType || product.title.toUpperCase()) : `DETALLE ${i}`,
+    tone: (i % 2 === 1 ? 'dark' : 'light') as 'light' | 'dark',
+    char: i % 2 === 1 ? '兰' : '木',
+    src: e.node.url,
+  }));
+  if (images.length === 0) {
+    images.push({ label: product.productType || product.title.toUpperCase(), tone: 'light', char: '木', src: null });
+  }
 
   function handleAdd() {
-    if (!size) {
+    if (!selectedVariant) {
       sizeRowRef.current?.animate(
         [{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'translateX(0)' }],
         { duration: 280 }
       );
       return;
     }
-    addToCart({ ...product, size, qty: 1 });
+    addToCart(selectedVariant.id);
   }
 
   const accordion = [
-    { id: 'descripcion', label: 'Descripción', body: product.description + (product.story ? '\n\n' + product.story : '') },
-    { id: 'composicion', label: 'Composición y cuidado', body: product.composition + '\n' + product.care },
+    { id: 'descripcion', label: 'Descripción', body: product.description },
+    { id: 'composicion', label: 'Composición y cuidado', body: 'Ver etiqueta interior.' },
     { id: 'envio', label: 'Envío y cambios', body: 'Envío estándar 3–5 días hábiles. Gratis en compras mayores a $1,500 MXN. Cambios y devoluciones dentro de 30 días, con etiquetas intactas.' },
     { id: 'origen', label: 'Origen', body: 'Cortado y cosido en CDMX. Lote 04 / 008. Cada prenda lleva el nombre de quien la hizo en la etiqueta interior.' },
   ];
@@ -82,15 +78,15 @@ export default function ProductTemplate({ productId }: ProductTemplateProps) {
           <span>·</span>
           <Link href="/tienda" className="text-inherit no-underline">Tienda</Link>
           <span>·</span>
-          <Link href={`/tienda?cat=${product.category}`} className="text-inherit no-underline">{product.category}</Link>
+          <Link href={`/tienda?cat=${categoryHandle}`} className="text-inherit no-underline">{categoryHandle}</Link>
           <span>·</span>
-          <span className="text-sumi">{product.name}</span>
+          <span className="text-sumi">{product.title}</span>
         </div>
       </div>
 
       {/* Product hero */}
       <section className="px-5 py-8 relative md:px-12 md:pt-10 md:pb-20">
-        <VerticalEyebrow side="right" top={40}>{product.name.toUpperCase()} · {product.label}</VerticalEyebrow>
+        <VerticalEyebrow side="right" top={40}>{product.title.toUpperCase()} · {product.productType}</VerticalEyebrow>
 
         <div className="max-w-[1400px] mx-auto">
           {/* Mobile thumbnail strip */}
@@ -106,7 +102,6 @@ export default function ProductTemplate({ productId }: ProductTemplateProps) {
             ))}
           </div>
 
-          {/* Desktop: 3-column grid */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[90px_1fr_460px] lg:gap-8 lg:items-start">
             {/* Left thumbnails — desktop only */}
             <div className="hidden lg:flex flex-col gap-2.5 sticky top-[100px]">
@@ -123,7 +118,14 @@ export default function ProductTemplate({ productId }: ProductTemplateProps) {
 
             {/* Main image */}
             <div className="relative">
-              <ImagePlaceholder ratio="3/4" label={images[activeImage].label} tone={images[activeImage].tone} seal sealChar={images[activeImage].char} src={images[activeImage].src} />
+              <ImagePlaceholder
+                ratio="3/4"
+                label={images[activeImage]?.label ?? ''}
+                tone={images[activeImage]?.tone ?? 'light'}
+                seal
+                sealChar={images[activeImage]?.char ?? '木'}
+                src={images[activeImage]?.src ?? null}
+              />
               <div className="absolute top-5 left-5 bg-paper px-3 py-1.5 font-mono text-[10px] tracking-[0.22em] text-sumi">
                 {String(activeImage + 1).padStart(2, '0')} / {String(images.length).padStart(2, '0')}
               </div>
@@ -132,15 +134,15 @@ export default function ProductTemplate({ productId }: ProductTemplateProps) {
             {/* Info */}
             <div className="lg:sticky lg:top-[100px]">
               <div className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-stone mb-3.5">
-                {product.category} · {product.label}
+                {categoryHandle} · {product.productType}
               </div>
               <h1 className="m-0 font-display text-[40px] leading-none font-normal tracking-[-0.02em] text-sumi md:text-[56px]">
-                {product.name}
+                {product.title}
               </h1>
 
               <div className="flex items-baseline gap-4 mt-3.5 mb-8">
                 <span className="font-display text-[28px] text-sumi font-normal">
-                  {formatMXN(product.price)}
+                  {displayPrice}
                 </span>
                 <span className="font-mono text-[10px] tracking-[0.22em] uppercase text-stone">
                   ó 3 mensualidades · sin interés
@@ -151,18 +153,7 @@ export default function ProductTemplate({ productId }: ProductTemplateProps) {
                 {product.description}
               </p>
 
-              {/* Color */}
-              <div className="mb-6">
-                <div className="font-mono text-[10.5px] tracking-[0.22em] uppercase text-stone mb-2.5">
-                  Color · <span className="text-sumi">{product.color}</span>
-                </div>
-                <div className="flex gap-2">
-                  <div className="w-7 h-7 bg-linen border border-sumi" />
-                  <div className="w-7 h-7 bg-slate border border-linen opacity-50" />
-                </div>
-              </div>
-
-              {/* Size */}
+              {/* Size selector */}
               <div ref={sizeRowRef} className="mb-7">
                 <div className="flex justify-between items-baseline mb-2.5">
                   <div className="font-mono text-[10.5px] tracking-[0.22em] uppercase text-stone">
@@ -170,25 +161,32 @@ export default function ProductTemplate({ productId }: ProductTemplateProps) {
                   </div>
                   <a href="/" className="font-mono text-[10px] tracking-[0.22em] uppercase text-slate underline">Guía de tallas</a>
                 </div>
-                <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${product.sizes.length}, 1fr)` }}>
-                  {product.sizes.map(s => (
+                <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${variants.length}, 1fr)` }}>
+                  {variants.map(v => (
                     <button
-                      key={s}
-                      onClick={() => setSize(s)}
-                      className={`py-3.5 font-mono text-[11px] tracking-[0.18em] uppercase cursor-pointer transition-all duration-150 border ${
-                        size === s
-                          ? 'bg-sumi text-paper border-sumi'
-                          : 'bg-transparent text-sumi border-ash'
+                      key={v.id}
+                      onClick={() => v.availableForSale && setSize(v.title)}
+                      disabled={!v.availableForSale}
+                      className={`py-3.5 font-mono text-[11px] tracking-[0.18em] uppercase transition-all duration-150 border ${
+                        !v.availableForSale
+                          ? 'bg-transparent text-stone border-linen line-through cursor-not-allowed'
+                          : size === v.title
+                            ? 'bg-sumi text-paper border-sumi cursor-pointer'
+                            : 'bg-transparent text-sumi border-ash cursor-pointer'
                       }`}
                     >
-                      {s}
+                      {v.title}
                     </button>
                   ))}
                 </div>
               </div>
 
-              <Button size="lg" full onClick={handleAdd}>
-                {size ? `Agregar a la bolsa · ${formatMXN(product.price)}` : 'Elige una talla'}
+              <Button size="lg" full onClick={handleAdd} disabled={loading}>
+                {loading
+                  ? 'Agregando...'
+                  : size
+                    ? `Agregar a la bolsa · ${displayPrice}`
+                    : 'Elige una talla'}
               </Button>
 
               <div className="mt-3.5 flex justify-between font-mono text-[9.5px] tracking-[0.18em] uppercase text-stone">
@@ -224,21 +222,19 @@ export default function ProductTemplate({ productId }: ProductTemplateProps) {
       {/* Story strip */}
       <section className="bg-linen px-5 py-16 relative overflow-hidden md:px-12 md:py-20">
         <div className="absolute top-1/2 -translate-y-1/2 -right-10 font-display text-ash opacity-50 pointer-events-none select-none font-normal leading-[0.85] text-[200px] md:text-[360px]">
-          {CATEGORY_CJK[product.category]}
+          {categoryCjk}
         </div>
 
         <div className="max-w-[1280px] mx-auto grid grid-cols-1 gap-12 items-center relative lg:grid-cols-2 lg:gap-14">
           <div>
             <div className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-stone mb-4">
-              La historia · {product.label}
+              La historia · {product.productType}
             </div>
             <h3 className="m-0 font-display text-[32px] leading-[1.05] font-normal tracking-[-0.015em] text-sumi md:text-[44px]">
-              {product.story
-                ? <>De donde<br /><em className="font-light">viene esta pieza.</em></>
-                : <>Cómo se<br /><em className="font-light">llegó aquí.</em></>}
+              Cómo se<br /><em className="font-light">llegó aquí.</em>
             </h3>
             <p className="mt-7 mb-0 font-body text-[16px] leading-[1.65] text-slate max-w-[480px]">
-              {product.story || 'Cortada y cosida en CDMX por un taller de seis manos. Tela natural, costura francesa, botonadura a mano. La etiqueta lleva el nombre de quien la hizo.'}
+              Cortada y cosida en CDMX por un taller de seis manos. Tela natural, costura francesa, botonadura a mano. La etiqueta lleva el nombre de quien la hizo.
             </p>
             <div className="mt-8 flex flex-wrap gap-8 font-mono text-[10.5px] tracking-[0.18em] uppercase text-stone">
               {[{ n: '06', label: 'Manos involucradas' }, { n: '04', label: 'Lote actual' }, { n: '12', label: 'Piezas hechas' }].map(stat => (
@@ -259,9 +255,9 @@ export default function ProductTemplate({ productId }: ProductTemplateProps) {
       {related.length > 0 && (
         <section className="px-5 py-16 md:px-12 md:pt-20 md:pb-10">
           <div className="max-w-[1280px] mx-auto">
-            <SectionHeader eyebrow="También en este lote" title="Piezas que conviven bien" side={`Otras de ${product.category}`} />
+            <SectionHeader eyebrow="También en este lote" title="Piezas que conviven bien" side={`Otras de ${categoryHandle}`} />
             <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
-              {related.map(p => <ProductCard key={p.id} product={p} density={tweaks.density} />)}
+              {related.map(p => <ProductCard key={p.handle} product={p} density={tweaks.density} />)}
             </div>
           </div>
         </section>
