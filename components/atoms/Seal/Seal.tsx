@@ -5,7 +5,7 @@ interface SealProps {
   char?: string;
 }
 
-export default function Seal({ size = 32, color = '#111111', bg = 'transparent', char = '木' }: SealProps) {
+export default function Seal({ size = 32, color = '#111111', bg = 'transparent', char = 'M' }: SealProps) {
   const hasBg = bg !== 'transparent';
   return (
     <span

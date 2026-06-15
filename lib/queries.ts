@@ -69,6 +69,18 @@ export async function getProductsByCollection(collectionHandle: string): Promise
   ) ?? [];
 }
 
+export async function searchProducts(query: string): Promise<ShopifyProduct[]> {
+  const { data, errors } = await shopifyClient.request(`
+    query SearchProducts($query: String!) {
+      products(first: 50, query: $query) {
+        edges { node { ${PRODUCT_FRAGMENT} } }
+      }
+    }
+  `, { variables: { query } });
+  if (errors) throw new Error(JSON.stringify(errors));
+  return data.products.edges.map((e: { node: ShopifyProduct }) => e.node);
+}
+
 // ── Cart mutations ─────────────────────────────────────────────────────────
 
 const CART_FRAGMENT = `

@@ -16,7 +16,7 @@ export default function HeroSplit() {
       </div>
 
       <div className="px-8 py-16 flex flex-col justify-center items-center text-center border-linen md:border-l md:border-r">
-        <div className="font-display text-[72px] leading-none text-sumi mb-4 font-normal md:text-[96px]">木兰</div>
+        <div className="font-display text-[72px] leading-none text-sumi mb-4 font-normal md:text-[96px]">Mulan Shop</div>
         <div className="font-mono text-[10.5px] tracking-[0.3em] uppercase text-stone mb-8">
           Mu · Lán · Magnolia
         </div>
@@ -38,7 +38,7 @@ export default function HeroSplit() {
             className="absolute bottom-10 left-1/2 -translate-x-1/2 font-display text-[220px] leading-[0.9] text-white opacity-35 font-normal"
             style={{ mixBlendMode: 'overlay' }}
           >
-            兰
+            S
           </div>
         </ImagePlaceholder>
       </div>

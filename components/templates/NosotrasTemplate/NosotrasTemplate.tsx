@@ -11,9 +11,8 @@ export default function NosotrasTemplate() {
 
       {/* Hero */}
       <section className="bg-sumi text-white px-5 py-[120px] relative overflow-hidden md:px-12 md:py-[160px]">
-        <div className="absolute top-1/2 -translate-y-1/2 -right-16 font-display leading-[0.85] opacity-10 pointer-events-none font-normal select-none text-[260px] md:text-[480px]"
-          style={{ fontFamily: 'var(--font-cjk)' }}>
-          花木蘭
+        <div className="absolute top-1/2 -translate-y-1/2 -right-16 font-display leading-[0.85] opacity-10 pointer-events-none font-normal select-none text-[260px] md:text-[480px]">
+          Mulan Shop
         </div>
         <div className="max-w-[900px] mx-auto relative">
           <div className="font-mono text-[10.5px] tracking-[0.3em] uppercase text-ash mb-8">Nosotras · Mulan Shop</div>
@@ -22,7 +21,7 @@ export default function NosotrasTemplate() {
             <em className="font-light">por una mirada.</em>
           </h1>
           <p className="font-body text-[17px] leading-[1.7] text-ash max-w-[560px]">
-            Un rasgo personal. Un nombre lanzado como broma. Una mujer que decidió mirarlo diferente y convertirlo en crecimiento.
+            Un rasgo personal. Un sobrenombre. Una mujer que decidió mirarlo diferente y convertirlo en crecimiento.
           </p>
         </div>
       </section>
@@ -45,14 +44,14 @@ export default function NosotrasTemplate() {
               Emprender no solo ha significado construir una marca, sino crecer. Cada colección, cada persona y cada paso han sido parte de esta historia que sigo construyendo con pasión.
             </p>
             <p className="font-body italic text-[16px] leading-[1.7] text-stone max-w-[520px] mb-9">
-              — Mulan (花木蘭): flor de magnolia. Pureza, belleza, fuerza. La capacidad de florecer incluso en las condiciones más adversas.
+              — Mulan: flor de magnolia. Pureza, belleza, fuerza. La capacidad de florecer incluso en las condiciones más adversas.
             </p>
             <p className="font-body text-[16px] leading-[1.7] text-slate max-w-[520px] text-justify">
               La magnolia no espera el momento perfecto. Florece en invierno, sola, sin hojas todavía. Aparece antes de que nadie lo espere. Ximena convirtió lo que alguien lanzó como inseguridad en el rasgo más suyo que tiene. El nombre que nació como broma se volvió símbolo. Y ese símbolo se volvió marca.
             </p>
           </div>
           <div className="relative">
-            <ImagePlaceholder ratio="3/4" label="XIMENA VARGAS" tone="dark" seal sealChar="花" src="/ximena-vargas.jpg" objectPosition="center top" />
+            <ImagePlaceholder ratio="3/4" label="XIMENA VARGAS" tone="dark" seal sealChar="X" src="/ximena-vargas.jpg" objectPosition="center top" />
             <div className="absolute -bottom-5 -right-5 bg-paper px-4 py-3 font-mono text-[10px] tracking-[0.18em] text-sumi border border-linen">
               CDMX · DESDE 2021
             </div>
@@ -106,7 +105,7 @@ export default function NosotrasTemplate() {
         <VerticalEyebrow side="left" top={120}>03 · Visión</VerticalEyebrow>
         <div className="max-w-[1280px] mx-auto grid grid-cols-1 gap-12 items-center lg:grid-cols-2 lg:gap-16">
           <div className="relative">
-            <ImagePlaceholder ratio="4/5" label="COLECCIÓN 04" tone="light" seal sealChar="兰" />
+            <ImagePlaceholder ratio="4/5" label="COLECCIÓN 04" tone="light" seal sealChar="S" />
           </div>
           <div>
             <div className="font-mono text-[10.5px] tracking-[0.25em] uppercase text-stone mb-6">03 · Visión</div>
@@ -136,21 +135,18 @@ export default function NosotrasTemplate() {
           <h2 className="m-0 font-display text-[32px] font-normal tracking-[-0.015em] text-sumi mb-12 md:text-[44px]">Nuestra esencia</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-ash/50">
             <div className="py-8 sm:pr-10">
-              <div className="font-display text-[64px] leading-none text-ash mb-5" style={{ fontFamily: 'var(--font-cjk)' }}>花</div>
               <div className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-stone mb-3">Fuerza</div>
               <p className="m-0 font-body text-[15px] leading-[1.7] text-slate text-justify">
                 Lo que alguien lanzó como inseguridad se convirtió en el rasgo más nuestro que tenemos. Mulan Shop nació del orgullo de cargar una herencia compleja y llevarla con intención.
               </p>
             </div>
             <div className="py-8 sm:px-10">
-              <div className="font-display text-[64px] leading-none text-ash mb-5" style={{ fontFamily: 'var(--font-cjk)' }}>木</div>
               <div className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-stone mb-3">Feminidad</div>
               <p className="m-0 font-body text-[15px] leading-[1.7] text-slate text-justify">
                 Seleccionamos cada prenda pensando en realzar la personalidad y el estilo único de cada mujer. Creemos en la moda como herramienta de expresión, seguridad y empoderamiento.
               </p>
             </div>
             <div className="py-8 sm:pl-10">
-              <div className="font-display text-[64px] leading-none text-ash mb-5" style={{ fontFamily: 'var(--font-cjk)' }}>兰</div>
               <div className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-stone mb-3">Intención</div>
               <p className="m-0 font-body text-[15px] leading-[1.7] text-slate text-justify">
                 Cada pieza refleja nuestro compromiso con la calidad, el detalle y la experiencia, para que nuestras clientas se sientan especiales en cada ocasión.
@@ -162,16 +158,15 @@ export default function NosotrasTemplate() {
 
       {/* Closing */}
       <section className="bg-sumi text-white px-5 py-[120px] text-center relative overflow-hidden md:px-12 md:py-[160px]">
-        <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 font-display leading-none opacity-[0.06] pointer-events-none select-none text-[320px] md:text-[600px]"
-          style={{ fontFamily: 'var(--font-cjk)' }}>
-          木兰
+        <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 font-display leading-none opacity-[0.06] pointer-events-none select-none text-[320px] md:text-[600px]">
+          Mulan Shop
         </div>
         <div className="max-w-[800px] mx-auto relative">
           <blockquote className="m-0 font-display text-[28px] leading-[1.1] font-light tracking-[-0.015em] text-white mb-12 md:text-[52px]">
             <em>"</em>Florecer no es convertirte<br />en lo que otros esperan de ti.<br />Es aparecer, exactamente como eres.<em>"</em>
           </blockquote>
           <div className="flex items-center justify-center gap-3.5 mb-14">
-            <Seal size={36} char="木" color="#FFFFFF" />
+            <Seal size={36} char="M" color="#FFFFFF" />
             <div className="text-left">
               <div className="font-display text-[16px] text-white">Ximena Vargas</div>
               <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-ash">Fundadora · CDMX</div>

@@ -17,7 +17,7 @@ export default function ImagePlaceholder({
   label = 'IMAGEN',
   tone = 'light',
   seal = false,
-  sealChar = '木',
+  sealChar = 'M',
   src = null,
   objectPosition = 'center 18%',
   children,

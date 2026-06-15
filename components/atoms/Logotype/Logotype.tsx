@@ -21,8 +21,7 @@ export default function Logotype({ variant = 'wordmark', size = 24, color = '#11
     return (
       <span style={{ ...baseStyle, fontSize: size * 1.4, fontWeight: 400 }}>
         M
-        <span style={{ color: '#7a2a20', fontSize: size * 0.5, verticalAlign: 'super' }}>木</span>
-      </span>
+        </span>
     );
   }
 
@@ -34,7 +33,7 @@ export default function Logotype({ variant = 'wordmark', size = 24, color = '#11
           width: size * 1.5, height: size * 1.5,
           background: '#111111', color: '#f2ede4',
           fontSize: size * 0.85, fontWeight: 500,
-        }}>木</span>
+        }}>M</span>
         <span style={{ fontSize: size * 0.7, letterSpacing: '0.18em', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', fontWeight: 400 }}>Mulán Shop</span>
       </span>
     );

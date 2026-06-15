@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Logotype from '@/components/atoms/Logotype/Logotype';
 import { useCart } from '@/context/CartContext';
@@ -11,6 +12,31 @@ export default function Header() {
   const { tweaks } = useTweaks();
   const cartCount = cart?.lines.edges.length ?? 0;
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (searchOpen) searchInputRef.current?.focus();
+  }, [searchOpen]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSearchOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, []);
+
+  function handleSearchSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (!q) return;
+    setSearchOpen(false);
+    setSearchQuery('');
+    router.push(`/buscar?q=${encodeURIComponent(q)}`);
+  }
 
   const cartBadge = (size: number) => (
     <span className={`inline-flex items-center justify-center min-w-[${size === 18 ? '18px' : '16px'}] h-[${size === 18 ? '18px' : '16px'}] px-[5px] text-[9px] tracking-normal ${
@@ -39,7 +65,12 @@ export default function Header() {
 
         <nav className="flex gap-6 justify-end items-baseline font-mono text-[10.5px] tracking-[0.22em] uppercase text-slate">
           <span className="cursor-default">ES · MX</span>
-          <span className="cursor-pointer hover:text-sumi transition-colors">Buscar</span>
+          <button
+            onClick={() => setSearchOpen(v => !v)}
+            className={`bg-transparent border-0 cursor-pointer p-0 font-mono text-[10.5px] tracking-[0.22em] uppercase transition-colors ${searchOpen ? 'text-sumi' : 'text-slate hover:text-sumi'}`}
+          >
+            Buscar
+          </button>
           <button
             onClick={openCart}
             className="bg-transparent border-0 cursor-pointer p-0 inline-flex gap-2 items-baseline font-mono text-[10.5px] tracking-[0.22em] uppercase text-slate hover:text-sumi transition-colors"
@@ -80,6 +111,36 @@ export default function Header() {
         </button>
       </div>
 
+      {/* Search bar */}
+      {searchOpen && (
+        <form
+          onSubmit={handleSearchSubmit}
+          className="border-t border-linen bg-bg/98 px-5 py-3 flex items-center gap-4 md:px-12"
+        >
+          <input
+            ref={searchInputRef}
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Buscar productos..."
+            className="flex-1 bg-transparent border-0 border-b border-sumi outline-none font-mono text-[11px] tracking-[0.18em] uppercase text-sumi placeholder:text-stone pb-1 min-w-0"
+          />
+          <button
+            type="submit"
+            className="bg-transparent border-0 cursor-pointer p-0 font-mono text-[10.5px] tracking-[0.22em] uppercase text-sumi hover:opacity-60 transition-opacity shrink-0"
+          >
+            Ir →
+          </button>
+          <button
+            type="button"
+            onClick={() => setSearchOpen(false)}
+            className="bg-transparent border-0 cursor-pointer p-0 font-mono text-[10.5px] tracking-[0.22em] uppercase text-stone hover:text-sumi transition-colors shrink-0"
+          >
+            × Cerrar
+          </button>
+        </form>
+      )}
+
       {/* Mobile nav drawer */}
       {mobileOpen && (
         <div className="md:hidden border-t border-linen px-5 pb-6 pt-2 flex flex-col bg-bg/98">
@@ -98,6 +159,13 @@ export default function Header() {
               {label}
             </Link>
           ))}
+          <Link
+            href="/buscar"
+            onClick={() => setMobileOpen(false)}
+            className="no-underline text-slate font-mono text-[11px] tracking-[0.22em] uppercase py-4 border-b border-linen block"
+          >
+            Buscar
+          </Link>
           <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-stone pt-4">ES · MX</span>
         </div>
       )}

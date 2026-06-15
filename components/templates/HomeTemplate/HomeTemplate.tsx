@@ -39,7 +39,7 @@ export default function HomeTemplate({ featuredProducts }: HomeTemplateProps) {
             <span key={i} className="inline-flex gap-[60px]">
               <span>Hecho lento en CDMX</span>
               <span className="text-ash">·</span>
-              <span className="font-body">木 · 兰</span>
+              <span className="font-body">M · S</span>
               <span className="text-ash">·</span>
               <span>Lote 04 — Primavera 26</span>
               <span className="text-ash">·</span>
@@ -60,16 +60,7 @@ export default function HomeTemplate({ featuredProducts }: HomeTemplateProps) {
               <Link key={cat.id} href={`/tienda?cat=${cat.id}`} className="no-underline text-inherit block relative">
                 <div className="relative mb-4 overflow-hidden">
                   <ImagePlaceholder ratio="4/5" label={cat.label.toUpperCase()} tone={i === 1 ? 'dark' : 'light'} />
-                  <div
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-display leading-none pointer-events-none select-none text-[160px] md:text-[240px]"
-                    style={{
-                      color: i === 1 ? '#f7f3eb' : '#111111',
-                      opacity: i === 1 ? 0.12 : 0.08,
-                    }}
-                  >
-                    {cat.cjk}
-                  </div>
-                  <div className={`absolute top-4 left-4 font-mono text-[10px] tracking-[0.22em] ${i === 1 ? 'text-white' : 'text-sumi'}`}>
+<div className={`absolute top-4 left-4 font-mono text-[10px] tracking-[0.22em] ${i === 1 ? 'text-white' : 'text-sumi'}`}>
                     0{i + 1} / 03
                   </div>
                 </div>
@@ -106,7 +97,7 @@ export default function HomeTemplate({ featuredProducts }: HomeTemplateProps) {
             </a>
           </div>
           <div className="relative">
-            <ImagePlaceholder ratio="4/5" label="DETALLE TELAR" tone="dark" seal sealChar="兰" />
+            <ImagePlaceholder ratio="4/5" label="DETALLE TELAR" tone="dark" seal sealChar="S" />
             <div className="absolute -bottom-5 -left-5 bg-paper px-4 py-3 font-mono text-[10px] tracking-[0.18em] text-sumi border border-linen">
               LOTE · 04 / 008
             </div>
@@ -146,7 +137,7 @@ export default function HomeTemplate({ featuredProducts }: HomeTemplateProps) {
                 Porque florecer no es convertirte en lo que otros esperan de ti. Es aparecer, exactamente como eres.
               </p>
               <p className="font-body italic text-[16px] leading-[1.65] text-stone max-w-[500px] mb-10">
-                — Mulan (花木蘭): magnolia. Florece en invierno, sola, antes de que nadie lo espere.
+                — Mulan: magnolia. Florece en invierno, sola, antes de que nadie lo espere.
               </p>
               <div className="flex items-center gap-6 mb-10 font-mono text-[10px] tracking-[0.22em] text-stone">
                 <span>2021 · To The Line</span>
@@ -157,7 +148,7 @@ export default function HomeTemplate({ featuredProducts }: HomeTemplateProps) {
                 Leer la historia completa →
               </a>
               <div className="mt-14 flex items-center gap-3.5">
-                <Seal size={36} char="花" />
+                <Seal size={36} char="X" />
                 <div>
                   <div className="font-display text-[16px]">Ximena Vargas</div>
                   <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-stone">Fundadora · Mulan Shop · CDMX</div>
@@ -165,7 +156,7 @@ export default function HomeTemplate({ featuredProducts }: HomeTemplateProps) {
               </div>
             </div>
             <div className="relative">
-              <ImagePlaceholder ratio="3/4" label="XIMENA VARGAS" tone="dark" seal sealChar="花" src="/ximena-vargas.jpg" objectPosition="center top" />
+              <ImagePlaceholder ratio="3/4" label="XIMENA VARGAS" tone="dark" seal sealChar="X" src="/ximena-vargas.jpg" objectPosition="center top" />
               <div className="absolute -bottom-5 -right-5 bg-paper px-4 py-3 font-mono text-[10px] tracking-[0.18em] text-sumi border border-linen">
                 CDMX · DESDE 2021
               </div>
@@ -173,17 +164,17 @@ export default function HomeTemplate({ featuredProducts }: HomeTemplateProps) {
           </div>
           <div className="mt-20 pt-10 border-t border-ash/50 grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-ash/50">
             <div className="py-8 sm:pr-8">
-              <div className="font-display text-[56px] leading-none text-ash mb-4">花</div>
+
               <div className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-stone mb-3">Fuerza</div>
               <p className="m-0 font-body italic text-[15px] leading-[1.6] text-slate">Lo que alguien lanzó como inseguridad se convirtió en el rasgo más nuestro que tenemos.</p>
             </div>
             <div className="py-8 sm:px-8">
-              <div className="font-display text-[56px] leading-none text-ash mb-4">木</div>
+
               <div className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-stone mb-3">Feminidad</div>
               <p className="m-0 font-body italic text-[15px] leading-[1.6] text-slate">Prendas pensadas para cada mujer que se mueve, que está y que se presenta completamente.</p>
             </div>
             <div className="py-8 sm:pl-8">
-              <div className="font-display text-[56px] leading-none text-ash mb-4">兰</div>
+
               <div className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-stone mb-3">Intención</div>
               <p className="m-0 font-body italic text-[15px] leading-[1.6] text-slate">Cada pieza elegida con propósito: para que quien la lleve aparezca exactamente como es.</p>
             </div>
@@ -194,7 +185,7 @@ export default function HomeTemplate({ featuredProducts }: HomeTemplateProps) {
       {/* Philosophy */}
       <section className="px-5 py-16 bg-linen relative overflow-hidden md:px-12 md:py-[120px]">
         <div className="absolute top-1/2 -translate-y-1/2 -right-20 font-display leading-[0.85] text-ash opacity-35 pointer-events-none font-normal text-[280px] md:text-[520px]">
-          木兰
+          Mulan Shop
         </div>
         <div className="max-w-[900px] mx-auto relative">
           <div className="font-mono text-[10.5px] tracking-[0.25em] uppercase text-stone mb-6">Filosofía · 05</div>
@@ -202,7 +193,7 @@ export default function HomeTemplate({ featuredProducts }: HomeTemplateProps) {
             <em>"</em>Florecer no es convertirte en lo que otros esperan de ti. Es aparecer, exactamente como eres.<em>"</em>
           </blockquote>
           <div className="mt-9 flex items-center gap-3.5">
-            <Seal size={36} char="木" />
+            <Seal size={36} char="M" />
             <div>
               <div className="font-display text-[16px]">Ximena Vargas</div>
               <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-stone">Fundadora · CDMX</div>
@@ -214,7 +205,7 @@ export default function HomeTemplate({ featuredProducts }: HomeTemplateProps) {
       {/* Newsletter */}
       <section className="px-5 py-16 text-center md:px-12 md:py-24">
         <div className="max-w-[540px] mx-auto">
-          <div className="font-display text-[72px] leading-none text-linen md:text-[96px]">兰</div>
+          <div className="font-display text-[72px] leading-none text-linen md:text-[96px]">S</div>
           <h3 className="mt-5 mb-3.5 font-display text-[32px] font-normal tracking-[-0.015em] md:text-[40px]">Carta cada luna nueva</h3>
           <p className="m-0 mb-8 font-body text-[15px] text-slate italic">
             Avisos del taller, lotes en preparación, lecturas. Sin ruido.

@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="grid grid-cols-2 gap-10 mb-14 md:grid-cols-[2fr_1fr_1fr_1fr] md:gap-12">
         <div className="col-span-2 md:col-span-1">
           <div className="font-display text-[56px] leading-[0.95] font-normal tracking-[-0.02em] text-white mb-4 md:text-[64px]">
-            木兰
+            Mulan Shop
           </div>
           <div className="font-body text-[14px] leading-relaxed text-ash max-w-xs">
             Una marca pequeña, hecha en México. Pensada para vestir lento. Cada lote se nombra y se numera.

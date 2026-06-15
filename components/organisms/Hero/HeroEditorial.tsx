@@ -32,10 +32,10 @@ export default function HeroEditorial() {
             className="absolute bottom-10 right-10 font-display leading-[0.85] text-white opacity-35 font-normal pointer-events-none select-none text-[200px] md:text-[380px]"
             style={{ mixBlendMode: 'overlay' }}
           >
-            木
+            M
           </div>
           <div className="absolute top-8 right-8 flex items-center gap-2.5 text-white">
-            <div className="w-10 h-10 bg-seal flex items-center justify-center font-display text-[22px] text-white">兰</div>
+            <div className="w-10 h-10 bg-seal flex items-center justify-center font-display text-[22px] text-white">S</div>
             <div className="font-mono text-[10px] tracking-[0.25em] uppercase">Sello · 04</div>
           </div>
           <div className="absolute bottom-8 left-8 text-white font-body italic text-[14px] max-w-[280px]">

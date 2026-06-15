@@ -18,12 +18,6 @@ interface ProductTemplateProps {
   related: ShopifyProduct[];
 }
 
-const CATEGORY_CJK: Record<string, string> = {
-  vestidos: '夜',
-  playa: '海',
-  deportivo: '動',
-};
-
 export default function ProductTemplate({ product, related }: ProductTemplateProps) {
   const { tweaks } = useTweaks();
   const { addToCart, loading } = useCart();
@@ -36,7 +30,6 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
   const variants = product.variants.edges.map(e => e.node);
   const selectedVariant = variants.find(v => v.title === size);
   const categoryHandle = product.collections.edges[0]?.node.handle ?? '';
-  const categoryCjk = CATEGORY_CJK[categoryHandle] ?? '木';
   const displayPrice = selectedVariant
     ? formatMXN(selectedVariant.price.amount)
     : formatMXN(product.priceRange.minVariantPrice.amount);
@@ -44,11 +37,11 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
   const images: { label: string; tone: 'light' | 'dark'; char: string; src: string | null }[] = product.images.edges.map((e, i) => ({
     label: i === 0 ? (product.productType || product.title.toUpperCase()) : `DETALLE ${i}`,
     tone: (i % 2 === 1 ? 'dark' : 'light') as 'light' | 'dark',
-    char: i % 2 === 1 ? '兰' : '木',
+    char: i % 2 === 1 ? 'S' : 'M',
     src: e.node.url,
   }));
   if (images.length === 0) {
-    images.push({ label: product.productType || product.title.toUpperCase(), tone: 'light', char: '木', src: null });
+    images.push({ label: product.productType || product.title.toUpperCase(), tone: 'light', char: 'M', src: null });
   }
 
   function handleAdd() {
@@ -123,7 +116,7 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
                 label={images[activeImage]?.label ?? ''}
                 tone={images[activeImage]?.tone ?? 'light'}
                 seal
-                sealChar={images[activeImage]?.char ?? '木'}
+                sealChar={images[activeImage]?.char ?? 'M'}
                 src={images[activeImage]?.src ?? null}
               />
               <div className="absolute top-5 left-5 bg-paper px-3 py-1.5 font-mono text-[10px] tracking-[0.22em] text-sumi">
@@ -221,10 +214,6 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
 
       {/* Story strip */}
       <section className="bg-linen px-5 py-16 relative overflow-hidden md:px-12 md:py-20">
-        <div className="absolute top-1/2 -translate-y-1/2 -right-10 font-display text-ash opacity-50 pointer-events-none select-none font-normal leading-[0.85] text-[200px] md:text-[360px]">
-          {categoryCjk}
-        </div>
-
         <div className="max-w-[1280px] mx-auto grid grid-cols-1 gap-12 items-center relative lg:grid-cols-2 lg:gap-14">
           <div>
             <div className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-stone mb-4">
@@ -246,7 +235,7 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
             </div>
           </div>
           <div>
-            <ImagePlaceholder ratio="5/6" label="DETALLE · TELAR" tone="dark" seal sealChar="兰" />
+            <ImagePlaceholder ratio="5/6" label="DETALLE · TELAR" tone="dark" seal sealChar="S" />
           </div>
         </div>
       </section>

@@ -49,7 +49,7 @@ export default function CollectionTemplate({ products }: CollectionTemplateProps
       {/* Banner */}
       <section className="relative overflow-hidden px-5 py-16 border-b border-linen md:px-12 md:pt-20 md:pb-16">
         <div className="absolute top-1/2 -translate-y-1/2 -right-[120px] font-display leading-[0.85] text-linen opacity-55 font-normal pointer-events-none select-none text-[280px] md:text-[560px]">
-          {activeCatObj ? activeCatObj.cjk : '木兰'}
+          {activeCatObj ? activeCatObj.label.charAt(0) : 'MS'}
         </div>
 
         <div className="max-w-[1280px] mx-auto relative">
@@ -86,7 +86,6 @@ export default function CollectionTemplate({ products }: CollectionTemplateProps
                 }`}
               >
                 {c.label}
-                {c.cjk && <span className="font-display ml-2 text-[12px] tracking-normal">{c.cjk}</span>}
               </button>
             ))}
           </div>
@@ -136,7 +135,7 @@ export default function CollectionTemplate({ products }: CollectionTemplateProps
 
       {/* Ethos block */}
       <section className="px-5 py-16 bg-sumi text-linen relative overflow-hidden md:px-12 md:py-24">
-        <div className="absolute top-1/2 -translate-y-1/2 -left-16 font-display leading-[0.85] text-slate opacity-50 pointer-events-none font-normal text-[280px] md:text-[480px]">兰</div>
+        <div className="absolute top-1/2 -translate-y-1/2 -left-16 font-display leading-[0.85] text-slate opacity-50 pointer-events-none font-normal text-[280px] md:text-[480px]">S</div>
         <div className="max-w-[1280px] mx-auto grid grid-cols-1 gap-6 items-center relative lg:grid-cols-[1fr_2fr] lg:gap-14">
           <div className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-ash">La promesa</div>
           <div>
