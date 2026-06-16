@@ -4,7 +4,7 @@
 import type { CustomFetchApi } from '@shopify/graphql-client';
 import type { ShopifyProduct, ShopifyCart } from './shopify';
 
-type Cat = 'deportivo' | 'playa' | 'vestidos';
+type Cat = 'deportivo' | 'playa' | 'vestidos-sets';
 
 function product(
   handle: string,
@@ -19,6 +19,13 @@ function product(
     handle,
     title,
     description: `${title} — pieza de muestra para pruebas.`,
+    descriptionHtml: `<p>${title} — pieza de muestra para pruebas.</p>`,
+    metafields: [
+      { key: 'longDescription', value: `${title} es una pieza de muestra.\nPensada para pruebas locales sin Shopify en vivo.\nCada línea demuestra el salto de párrafo del texto multilínea.` },
+      { key: 'composicion', value: '95% algodón, 5% elastano.\nLavar a mano, secar a la sombra.' },
+      { key: 'envio', value: 'Envío 3–5 días hábiles. Gratis sobre $1,500 MXN.' },
+      { key: 'origen', value: `Cortado y cosido en CDMX. Lote de muestra para ${title}.` },
+    ],
     productType,
     priceRange: { minVariantPrice: { amount, currencyCode: 'MXN' } },
     options: [{ name: 'Talla', values: sizes }],
@@ -43,7 +50,7 @@ function product(
 }
 
 export const MOCK_PRODUCTS: ShopifyProduct[] = [
-  product('vestido-noche', 'Vestido Noche', 'Vestido', '4290.00', 'vestidos'),
+  product('vestido-noche', 'Vestido Noche', 'Vestido', '4290.00', 'vestidos-sets'),
   product('top-marea', 'Top Marea', 'Top', '720.00', 'deportivo'),
   product('short-arena', 'Short Arena', 'Short', '1290.00', 'playa'),
   product('legging-bruma', 'Legging Bruma', 'Legging', '1490.00', 'deportivo'),
@@ -51,6 +58,30 @@ export const MOCK_PRODUCTS: ShopifyProduct[] = [
 ];
 
 const edges = (list: ShopifyProduct[]) => ({ edges: list.map(node => ({ node })) });
+
+const COLLECTION_TITLES: Record<Cat, string> = {
+  deportivo: 'Deportivo',
+  playa: 'Playa',
+  'vestidos-sets': 'Vestidos & Sets',
+};
+
+// Collections derived from the product fixtures, in the order they first appear.
+function mockCollections() {
+  const handles = [
+    ...new Set(MOCK_PRODUCTS.flatMap(p => p.collections.edges.map(e => e.node.handle))),
+  ] as Cat[];
+  return handles.map(handle => {
+    const items = MOCK_PRODUCTS.filter(p =>
+      p.collections.edges.some(e => e.node.handle === handle),
+    );
+    return {
+      handle,
+      title: COLLECTION_TITLES[handle] ?? handle,
+      description: `Colección ${handle}.`,
+      products: { edges: items.map(p => ({ node: { id: p.id } })) },
+    };
+  });
+}
 
 function findVariant(variantId: string) {
   for (const p of MOCK_PRODUCTS) {
@@ -95,7 +126,10 @@ function buildCart(
   };
 }
 
-function resolve(query: string, vars: Record<string, unknown>): unknown {
+// Resolves a storefront GraphQL operation to fixture data. Shared by the
+// server-side fetch shim and the Playwright browser route used for cart
+// mutations (which run client-side, where MOCK_SHOPIFY is not available).
+export function resolveMockOperation(query: string, vars: Record<string, unknown>): unknown {
   if (query.includes('CartCreate')) {
     return {
       cartCreate: {
@@ -125,6 +159,9 @@ function resolve(query: string, vars: Record<string, unknown>): unknown {
     );
     return { collectionByHandle: list.length ? { products: edges(list) } : null };
   }
+  if (query.includes('Collections')) {
+    return { collections: { edges: mockCollections().map(node => ({ node })) } };
+  }
   if (query.includes('SearchProducts')) {
     const q = String(vars.query ?? '').toLowerCase();
     const list = MOCK_PRODUCTS.filter(p =>
@@ -143,7 +180,7 @@ export const mockShopifyFetch: CustomFetchApi = async (_url, init) => {
   } catch {
     // ignore
   }
-  const data = resolve(body.query ?? '', body.variables ?? {});
+  const data = resolveMockOperation(body.query ?? '', body.variables ?? {});
   return new Response(JSON.stringify({ data }), {
     status: 200,
     headers: { 'content-type': 'application/json' },

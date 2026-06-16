@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const PORT = 3000;
+// Dedicated port so the mocked test server never collides with (or gets
+// reused from) a normal `next dev` running on 3000.
+const PORT = Number(process.env.E2E_PORT ?? 3100);
 const baseURL = `http://localhost:${PORT}`;
 
 export default defineConfig({
@@ -25,12 +27,15 @@ export default defineConfig({
   // Run the app with Shopify mocked at the fetch layer so server components
   // render deterministic fixtures without live storefront credentials.
   webServer: {
-    command: 'npm run dev',
+    // Production build/start (not `next dev`) so the suite is isolated from any
+    // running dev server and matches how the app behaves in production.
+    command: `next build && next start -p ${PORT}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    timeout: 240_000,
     env: {
       MOCK_SHOPIFY: '1',
+      NEXT_DIST_DIR: '.next-e2e',
       NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN: 'mock.myshopify.com',
       NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN: 'test-token',
     },

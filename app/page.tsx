@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { getAllProducts } from '@/lib/queries';
+import { getAllProducts, getCollections } from '@/lib/queries';
+import { toCategories } from '@/lib/products';
 import HomeTemplate from '@/components/templates/HomeTemplate/HomeTemplate';
 
 export const metadata: Metadata = {
@@ -8,6 +9,11 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const products = await getAllProducts();
-  return <HomeTemplate featuredProducts={products.slice(0, 4)} />;
+  const [products, collections] = await Promise.all([getAllProducts(), getCollections()]);
+  return (
+    <HomeTemplate
+      featuredProducts={products.slice(0, 4)}
+      categories={toCategories(collections)}
+    />
+  );
 }

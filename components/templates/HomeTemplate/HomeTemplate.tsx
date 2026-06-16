@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useTweaks } from '@/context/TweaksContext';
-import { MULAN_CATEGORIES } from '@/lib/products';
+import { MULAN_CATEGORIES, type Category } from '@/lib/products';
 import type { ShopifyProduct } from '@/lib/shopify';
 import HeroEditorial from '@/components/organisms/Hero/HeroEditorial';
 import HeroSplit from '@/components/organisms/Hero/HeroSplit';
@@ -16,9 +16,10 @@ import NewsletterForm from '@/components/molecules/NewsletterForm/NewsletterForm
 
 interface HomeTemplateProps {
   featuredProducts: ShopifyProduct[];
+  categories?: Category[];
 }
 
-export default function HomeTemplate({ featuredProducts }: HomeTemplateProps) {
+export default function HomeTemplate({ featuredProducts, categories = MULAN_CATEGORIES }: HomeTemplateProps) {
   const { tweaks } = useTweaks();
   const { heroVariant, density } = tweaks;
   const compact = density === 'compact';
@@ -56,12 +57,12 @@ export default function HomeTemplate({ featuredProducts }: HomeTemplateProps) {
         <div className="max-w-[1280px] mx-auto">
           <SectionHeader eyebrow="Tienda" title="Tres ritmos del día" side="Para moverse · para estar · para presentarse" />
           <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${compact ? 'gap-3' : 'gap-6'}`}>
-            {MULAN_CATEGORIES.map((cat, i) => (
+            {categories.map((cat, i) => (
               <Link key={cat.id} href={`/tienda?cat=${cat.id}`} className="no-underline text-inherit block relative">
                 <div className="relative mb-4 overflow-hidden">
                   <ImagePlaceholder ratio="4/5" label={cat.label.toUpperCase()} tone={i === 1 ? 'dark' : 'light'} />
 <div className={`absolute top-4 left-4 font-mono text-[10px] tracking-[0.22em] ${i === 1 ? 'text-white' : 'text-sumi'}`}>
-                    0{i + 1} / 03
+                    {String(i + 1).padStart(2, '0')} / {String(categories.length).padStart(2, '0')}
                   </div>
                 </div>
                 <div className="flex justify-between items-baseline">

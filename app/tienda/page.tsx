@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { getAllProducts } from '@/lib/queries';
+import { getAllProducts, getCollections } from '@/lib/queries';
+import { toCategories } from '@/lib/products';
 import CollectionTemplate from '@/components/templates/CollectionTemplate/CollectionTemplate';
 
 export const metadata: Metadata = {
@@ -9,10 +10,10 @@ export const metadata: Metadata = {
 };
 
 export default async function TiendaPage() {
-  const products = await getAllProducts();
+  const [products, collections] = await Promise.all([getAllProducts(), getCollections()]);
   return (
     <Suspense>
-      <CollectionTemplate products={products} />
+      <CollectionTemplate products={products} categories={toCategories(collections)} />
     </Suspense>
   );
 }

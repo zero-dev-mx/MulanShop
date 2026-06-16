@@ -20,11 +20,20 @@ export const shopifyClient = createStorefrontApiClient({
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
+export interface ShopifyMetafield {
+  key: string;
+  value: string;
+}
+
 export interface ShopifyProduct {
   id: string;
   handle: string;
   title: string;
   description: string;
+  descriptionHtml: string;
+  // Aligned with the identifiers requested in the query; an unset metafield
+  // comes back as null, so look these up by key rather than position.
+  metafields: (ShopifyMetafield | null)[];
   productType: string;
   priceRange: {
     minVariantPrice: { amount: string; currencyCode: string };
@@ -66,4 +75,11 @@ export interface ShopifyCart {
   cost: {
     totalAmount: { amount: string; currencyCode: string };
   };
+}
+
+export interface ShopifyCollection {
+  handle: string;
+  title: string;
+  description: string;
+  productCount: number;
 }

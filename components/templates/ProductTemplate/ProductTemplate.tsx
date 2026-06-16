@@ -12,6 +12,7 @@ import SectionHeader from '@/components/molecules/SectionHeader/SectionHeader';
 import VerticalEyebrow from '@/components/atoms/VerticalEyebrow/VerticalEyebrow';
 import Button from '@/components/atoms/Button/Button';
 import Seal from '@/components/atoms/Seal/Seal';
+import Lightbox from '@/components/organisms/Lightbox/Lightbox';
 
 interface ProductTemplateProps {
   product: ShopifyProduct;
@@ -24,6 +25,7 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
 
   const [size, setSize] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [openSection, setOpenSection] = useState<string | null>('descripcion');
   const sizeRowRef = useRef<HTMLDivElement>(null);
 
@@ -61,6 +63,13 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
     images.push({ label: product.productType || product.title.toUpperCase(), tone: 'light', char: 'M', src: null });
   }
 
+  // Only real (non-placeholder) images are zoomable in the lightbox. Shopify
+  // products always carry srcs, so the indices stay aligned with activeImage.
+  const lightboxImages = images
+    .filter((im): im is typeof im & { src: string } => im.src !== null)
+    .map(im => ({ src: im.src, label: im.label }));
+  const canZoom = lightboxImages.length > 0;
+
   function handleAdd() {
     if (!selectedVariant) {
       if (hasSizes) {
@@ -74,11 +83,22 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
     addToCart(selectedVariant.id);
   }
 
-  const accordion = [
-    { id: 'descripcion', label: 'Descripción', body: product.description },
-    { id: 'composicion', label: 'Composición y cuidado', body: 'Ver etiqueta interior.' },
-    { id: 'envio', label: 'Envío y cambios', body: 'Envío estándar 3–5 días hábiles. Gratis en compras mayores a $1,500 MXN. Cambios y devoluciones dentro de 30 días, con etiquetas intactas.' },
-    { id: 'origen', label: 'Origen', body: 'Cortado y cosido en CDMX. Lote 04 / 008. Cada prenda lleva el nombre de quien la hizo en la etiqueta interior.' },
+  // Metafield bodies are merchant-authored in Shopify; fall back to house copy
+  // when a product hasn't set one yet.
+  const meta = (key: string) =>
+    product.metafields.find(m => m?.key === key)?.value || null;
+
+  // Prefer the long-form text metafield; fall back to the rich HTML body, then
+  // to the plain description.
+  const longDescription = meta('longDescription');
+  type AccordionSection = { id: string; label: string; body?: string; html?: string };
+  const accordion: AccordionSection[] = [
+    longDescription
+      ? { id: 'descripcion', label: 'Descripción', body: longDescription }
+      : { id: 'descripcion', label: 'Descripción', html: product.descriptionHtml || `<p>${product.description}</p>` },
+    { id: 'composicion', label: 'Composición y cuidado', body: meta('composicion') ?? 'Ver etiqueta interior.' },
+    { id: 'envio', label: 'Envío y cambios', body: meta('envio') ?? 'Envío estándar 3–5 días hábiles. Gratis en compras mayores a $1,500 MXN. Cambios y devoluciones dentro de 30 días, con etiquetas intactas.' },
+    { id: 'origen', label: 'Origen', body: meta('origen') ?? 'Cortado y cosido en CDMX. Lote 04 / 008. Cada prenda lleva el nombre de quien la hizo en la etiqueta interior.' },
   ];
 
   return (
@@ -130,17 +150,30 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
 
             {/* Main image */}
             <div className="relative">
-              <ImagePlaceholder
-                ratio="3/4"
-                label={images[activeImage]?.label ?? ''}
-                tone={images[activeImage]?.tone ?? 'light'}
-                seal
-                sealChar={images[activeImage]?.char ?? 'M'}
-                src={images[activeImage]?.src ?? null}
-              />
-              <div className="absolute top-5 left-5 bg-paper px-3 py-1.5 font-mono text-[10px] tracking-[0.22em] text-sumi">
+              <button
+                type="button"
+                onClick={() => canZoom && setLightboxOpen(true)}
+                disabled={!canZoom}
+                aria-label="Ampliar imagen"
+                className={`block w-full p-0 bg-transparent border-0 ${canZoom ? 'cursor-zoom-in' : 'cursor-default'}`}
+              >
+                <ImagePlaceholder
+                  ratio="3/4"
+                  label={images[activeImage]?.label ?? ''}
+                  tone={images[activeImage]?.tone ?? 'light'}
+                  seal
+                  sealChar={images[activeImage]?.char ?? 'M'}
+                  src={images[activeImage]?.src ?? null}
+                />
+              </button>
+              <div className="absolute top-5 left-5 bg-paper px-3 py-1.5 font-mono text-[10px] tracking-[0.22em] text-sumi pointer-events-none">
                 {String(activeImage + 1).padStart(2, '0')} / {String(images.length).padStart(2, '0')}
               </div>
+              {canZoom && (
+                <div className="absolute bottom-5 right-5 bg-paper/90 px-3 py-1.5 font-mono text-[9.5px] tracking-[0.22em] uppercase text-sumi pointer-events-none">
+                  Ampliar ⤢
+                </div>
+              )}
             </div>
 
             {/* Info */}
@@ -225,9 +258,16 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
                       <span className="font-display text-[18px]">{openSection === s.id ? '−' : '+'}</span>
                     </button>
                     {openSection === s.id && (
-                      <div className="pb-5 font-body text-[14.5px] leading-[1.6] text-slate whitespace-pre-line">
-                        {s.body}
-                      </div>
+                      s.html ? (
+                        <div
+                          className="pb-5 font-body text-[14.5px] leading-[1.6] text-slate [&_p]:m-0 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:underline [&_strong]:font-medium [&_strong]:text-sumi [&_em]:italic"
+                          dangerouslySetInnerHTML={{ __html: s.html }}
+                        />
+                      ) : (
+                        <div className="pb-5 font-body text-[14.5px] leading-[1.6] text-slate whitespace-pre-line">
+                          {s.body}
+                        </div>
+                      )
                     )}
                   </div>
                 ))}
@@ -275,6 +315,15 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
             </div>
           </div>
         </section>
+      )}
+
+      {lightboxOpen && canZoom && (
+        <Lightbox
+          images={lightboxImages}
+          index={Math.min(activeImage, lightboxImages.length - 1)}
+          onIndexChange={setActiveImage}
+          onClose={() => setLightboxOpen(false)}
+        />
       )}
     </main>
   );

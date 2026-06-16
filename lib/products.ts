@@ -1,15 +1,32 @@
+import type { ShopifyCollection } from './shopify';
+
 export interface Category {
-  id: 'deportivo' | 'playa' | 'vestidos';
+  id: string;
   label: string;
   count: number;
   blurb: string;
 }
 
+// Curated set: defines which collections are surfaced, their order, and the
+// editorial blurbs (which don't live in Shopify). Labels and counts here are
+// only fallbacks — toCategories() refreshes them from the live storefront.
 export const MULAN_CATEGORIES: Category[] = [
   { id: 'deportivo', label: 'Deportivo',      count: 4, blurb: 'Para el cuerpo en movimiento.' },
   { id: 'playa',     label: 'Playa',           count: 3, blurb: 'Para los días junto al agua.' },
-  { id: 'vestidos',  label: 'Vestidos & Sets', count: 3, blurb: 'Para las noches que se cuentan.' },
+  { id: 'vestidos-sets', label: 'Vestidos & Sets', count: 3, blurb: 'Para las noches que se cuentan.' },
 ];
+
+// Overlays the live Shopify product count onto the curated set, keyed by
+// collection handle. Label and blurb stay curated (editorial, Spanish — the
+// Shopify title may differ, e.g. "Active Wear" for the `deportivo` handle). A
+// curated category with no matching collection falls back to its static values.
+export function toCategories(collections: ShopifyCollection[]): Category[] {
+  const byHandle = new Map(collections.map(c => [c.handle, c]));
+  return MULAN_CATEGORIES.map(cat => {
+    const live = byHandle.get(cat.id);
+    return live ? { ...cat, count: live.productCount } : cat;
+  });
+}
 
 export function formatMXN(n: string | number): string {
   const num = typeof n === 'string' ? parseFloat(n) : n;

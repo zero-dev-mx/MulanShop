@@ -1,4 +1,11 @@
-import { MULAN_CATEGORIES, formatMXN } from './products';
+import { MULAN_CATEGORIES, formatMXN, toCategories } from './products';
+import type { ShopifyCollection } from './shopify';
+
+const collection = (
+  handle: string,
+  title: string,
+  productCount: number,
+): ShopifyCollection => ({ handle, title, description: '', productCount });
 
 describe('formatMXN', () => {
   it('formats whole numbers', () => {
@@ -23,6 +30,38 @@ describe('MULAN_CATEGORIES', () => {
     const catIds = MULAN_CATEGORIES.map(c => c.id);
     expect(catIds).toContain('deportivo');
     expect(catIds).toContain('playa');
-    expect(catIds).toContain('vestidos');
+    expect(catIds).toContain('vestidos-sets');
+  });
+});
+
+describe('toCategories', () => {
+  it('overlays the live count onto the curated set, preserving order, label and blurb', () => {
+    const result = toCategories([
+      collection('playa', 'Playa MX', 5),
+      // Shopify title differs from the curated label on purpose.
+      collection('deportivo', 'Active Wear', 9),
+      collection('vestidos-sets', 'Vestidos MX', 2),
+    ]);
+
+    // Order follows the curated set, not the input order.
+    expect(result.map(c => c.id)).toEqual(['deportivo', 'playa', 'vestidos-sets']);
+
+    const deportivo = result.find(c => c.id === 'deportivo')!;
+    // Count is live; label and blurb stay curated (Spanish), ignoring the title.
+    expect(deportivo.count).toBe(9);
+    expect(deportivo.label).toBe('Deportivo');
+    expect(deportivo.blurb).toBe('Para el cuerpo en movimiento.');
+  });
+
+  it('falls back to static values for a curated category with no live collection', () => {
+    const result = toCategories([collection('deportivo', 'Deportivo MX', 9)]);
+    const playa = result.find(c => c.id === 'playa')!;
+    expect(playa).toEqual(MULAN_CATEGORIES.find(c => c.id === 'playa'));
+  });
+
+  it('ignores collections that are not part of the curated set', () => {
+    const result = toCategories([collection('frontpage', 'Home page', 99)]);
+    expect(result.map(c => c.id)).toEqual(['deportivo', 'playa', 'vestidos-sets']);
+    expect(result).toEqual(MULAN_CATEGORIES);
   });
 });

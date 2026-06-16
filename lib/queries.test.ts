@@ -7,6 +7,7 @@ import {
   getAllProducts,
   getProductByHandle,
   getProductsByCollection,
+  getCollections,
   searchProducts,
   cartCreate,
   cartLinesAdd,
@@ -55,6 +56,17 @@ describe('getProductByHandle', () => {
       { variables: { handle: 'top-marea' } },
     );
   });
+
+  it('requests descriptionHtml and the accordion metafields', async () => {
+    request.mockResolvedValue({ data: { productByHandle: null } });
+    await getProductByHandle('top-marea');
+    const query = request.mock.calls[0][0] as string;
+    expect(query).toContain('descriptionHtml');
+    expect(query).toContain('metafields(identifiers:');
+    for (const key of ['longDescription', 'composicion', 'envio', 'origen']) {
+      expect(query).toContain(`key: "${key}"`);
+    }
+  });
 });
 
 describe('getProductsByCollection', () => {
@@ -68,6 +80,45 @@ describe('getProductsByCollection', () => {
   it('returns an empty array for a missing collection', async () => {
     request.mockResolvedValue({ data: { collectionByHandle: null } });
     await expect(getProductsByCollection('ghost')).resolves.toEqual([]);
+  });
+});
+
+describe('getCollections', () => {
+  it('maps collections and derives productCount from product edges', async () => {
+    request.mockResolvedValue({
+      data: {
+        collections: {
+          edges: [
+            {
+              node: {
+                handle: 'deportivo',
+                title: 'Deportivo',
+                description: 'En movimiento.',
+                products: { edges: [{ node: { id: '1' } }, { node: { id: '2' } }] },
+              },
+            },
+            {
+              node: {
+                handle: 'vestidos-sets',
+                title: 'Vestidos & Sets',
+                description: '',
+                products: { edges: [{ node: { id: '3' } }] },
+              },
+            },
+          ],
+        },
+      },
+    });
+
+    await expect(getCollections()).resolves.toEqual([
+      { handle: 'deportivo', title: 'Deportivo', description: 'En movimiento.', productCount: 2 },
+      { handle: 'vestidos-sets', title: 'Vestidos & Sets', description: '', productCount: 1 },
+    ]);
+  });
+
+  it('throws when the API returns errors', async () => {
+    request.mockResolvedValue({ errors: { message: 'boom' } });
+    await expect(getCollections()).rejects.toThrow('boom');
   });
 });
 

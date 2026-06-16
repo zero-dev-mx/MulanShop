@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test('header search routes to results for a query', async ({ page }) => {
   await page.goto('/');

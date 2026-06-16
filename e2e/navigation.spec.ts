@@ -1,9 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test('category nav filters the shop to deportivo', async ({ page }) => {
   await page.goto('/');
 
-  await page.getByRole('link', { name: 'Deportivo' }).click();
+  await page.getByRole('link', { name: 'Deportivo', exact: true }).click();
 
   await expect(page).toHaveURL(/\/tienda\?cat=deportivo/);
   await expect(page.getByRole('heading', { level: 1 })).toContainText('moverse');

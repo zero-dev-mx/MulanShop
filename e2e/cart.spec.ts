@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test('add a product to the bag, then remove it', async ({ page }) => {
   await page.goto('/producto/top-marea');
@@ -22,7 +22,7 @@ test('add a product to the bag, then remove it', async ({ page }) => {
 test('empty bag shows the empty state from the header', async ({ page }) => {
   await page.goto('/');
 
-  await page.getByRole('button', { name: /Bolsa/ }).click();
+  await page.getByRole('button', { name: /Bolsa/ }).first().click();
 
   const drawer = page.getByRole('complementary');
   await expect(drawer.getByText(/Tu bolsa está vacía/)).toBeVisible();

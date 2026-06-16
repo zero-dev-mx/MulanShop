@@ -1,4 +1,16 @@
-import { shopifyClient, type ShopifyProduct, type ShopifyCart } from './shopify';
+import { shopifyClient, type ShopifyProduct, type ShopifyCart, type ShopifyCollection } from './shopify';
+
+// ── Metafields ───────────────────────────────────────────────────────────────
+// Accordion sections sourced per-product from Shopify. These must match the
+// metafield definitions created in Shopify Admin (Settings → Custom data →
+// Products), namespace `custom`, type "multi-line text". Keep this list and the
+// accordion in ProductTemplate in sync.
+export const PRODUCT_METAFIELD_NAMESPACE = 'custom';
+export const PRODUCT_METAFIELD_KEYS = ['longDescription', 'composicion', 'envio', 'origen'] as const;
+
+const metafieldIdentifiers = PRODUCT_METAFIELD_KEYS.map(
+  key => `{ namespace: "${PRODUCT_METAFIELD_NAMESPACE}", key: "${key}" }`,
+).join(', ');
 
 // ── Fragments ──────────────────────────────────────────────────────────────
 
@@ -7,6 +19,11 @@ const PRODUCT_FRAGMENT = `
   handle
   title
   description
+  descriptionHtml
+  metafields(identifiers: [${metafieldIdentifiers}]) {
+    key
+    value
+  }
   productType
   priceRange {
     minVariantPrice { amount currencyCode }
@@ -84,6 +101,44 @@ export async function searchProducts(query: string): Promise<ShopifyProduct[]> {
   `, { variables: { query } });
   if (errors) throw new Error(JSON.stringify(errors));
   return data.products.edges.map((e: { node: ShopifyProduct }) => e.node);
+}
+
+// ── Collection queries ───────────────────────────────────────────────────────
+
+// The Storefront API has no productsCount on Collection, so we read product ids
+// and count them. `first: 250` is the per-connection max and is ample for this
+// catalog; revisit with pagination if a collection ever exceeds it.
+export async function getCollections(): Promise<ShopifyCollection[]> {
+  const { data, errors } = await shopifyClient.request(`
+    query Collections {
+      collections(first: 50) {
+        edges {
+          node {
+            handle
+            title
+            description
+            products(first: 250) { edges { node { id } } }
+          }
+        }
+      }
+    }
+  `);
+  if (errors) throw new Error(JSON.stringify(errors));
+  return data.collections.edges.map(
+    (e: {
+      node: {
+        handle: string;
+        title: string;
+        description: string;
+        products: { edges: unknown[] };
+      };
+    }) => ({
+      handle: e.node.handle,
+      title: e.node.title,
+      description: e.node.description,
+      productCount: e.node.products.edges.length,
+    }),
+  );
 }
 
 // ── Cart mutations ─────────────────────────────────────────────────────────

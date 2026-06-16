@@ -3,20 +3,21 @@
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { MULAN_CATEGORIES } from '@/lib/products';
+import { MULAN_CATEGORIES, type Category } from '@/lib/products';
 import type { ShopifyProduct } from '@/lib/shopify';
 import { useTweaks } from '@/context/TweaksContext';
 import ProductCard from '@/components/molecules/ProductCard/ProductCard';
 import VerticalEyebrow from '@/components/atoms/VerticalEyebrow/VerticalEyebrow';
 
 type SortKey = 'curado' | 'asc' | 'desc';
-type CatFilter = 'todo' | 'deportivo' | 'playa' | 'vestidos';
+type CatFilter = 'todo' | 'deportivo' | 'playa' | 'vestidos-sets';
 
 interface CollectionTemplateProps {
   products: ShopifyProduct[];
+  categories?: Category[];
 }
 
-export default function CollectionTemplate({ products }: CollectionTemplateProps) {
+export default function CollectionTemplate({ products, categories = MULAN_CATEGORIES }: CollectionTemplateProps) {
   const searchParams = useSearchParams();
   const initialCat = (searchParams.get('cat') as CatFilter | null) ?? 'todo';
 
@@ -35,7 +36,7 @@ export default function CollectionTemplate({ products }: CollectionTemplateProps
   if (sort === 'asc')  displayed = [...displayed].sort((a, b) => parseFloat(a.priceRange.minVariantPrice.amount) - parseFloat(b.priceRange.minVariantPrice.amount));
   if (sort === 'desc') displayed = [...displayed].sort((a, b) => parseFloat(b.priceRange.minVariantPrice.amount) - parseFloat(a.priceRange.minVariantPrice.amount));
 
-  const activeCatObj = MULAN_CATEGORIES.find(c => c.id === activeCat);
+  const activeCatObj = categories.find(c => c.id === activeCat);
 
   const h1Text = () => {
     if (activeCat === 'todo')      return <>Toda la <em className="font-light">tienda</em></>;
@@ -77,7 +78,7 @@ export default function CollectionTemplate({ products }: CollectionTemplateProps
       <section className="border-b border-linen bg-bg sticky top-[53px] z-20 md:top-[59px]">
         <div className="max-w-[1280px] mx-auto px-5 py-3 flex flex-wrap justify-between items-center gap-3 md:px-12 md:py-[18px]">
           <div className="flex flex-wrap gap-1 font-mono text-[10.5px] tracking-[0.22em] uppercase">
-            {([{ id: 'todo', label: 'Todo' }, ...MULAN_CATEGORIES] as { id: string; label: string; cjk?: string }[]).map(c => (
+            {([{ id: 'todo', label: 'Todo' }, ...categories] as { id: string; label: string; cjk?: string }[]).map(c => (
               <button
                 key={c.id}
                 onClick={() => setActiveCat(c.id as CatFilter)}

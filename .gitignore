@@ -127,3 +127,6 @@ shopify.app.toml
 .eslintcache
 .stylelintcache
 .prettiercache
+
+# E2E isolated build output
+.next-e2e/
