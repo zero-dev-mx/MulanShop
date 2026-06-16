@@ -11,6 +11,10 @@ const PRODUCT_FRAGMENT = `
   priceRange {
     minVariantPrice { amount currencyCode }
   }
+  options {
+    name
+    values
+  }
   images(first: 5) {
     edges { node { url altText } }
   }
@@ -20,6 +24,7 @@ const PRODUCT_FRAGMENT = `
         id
         title
         availableForSale
+        selectedOptions { name value }
         price { amount currencyCode }
       }
     }

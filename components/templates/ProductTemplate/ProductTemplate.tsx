@@ -28,7 +28,24 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
   const sizeRowRef = useRef<HTMLDivElement>(null);
 
   const variants = product.variants.edges.map(e => e.node);
-  const selectedVariant = variants.find(v => v.title === size);
+
+  // Sizes come from the Shopify product option named "Talla" (or "Size"), not
+  // the variant title — a variant's title collapses to "M / Negro" once a
+  // product carries more than one option. Resolve back to a variant through
+  // selectedOptions so multi-option products keep working.
+  const sizeOption = product.options.find(o => /^(talla|size)$/i.test(o.name));
+  const sizeValues = sizeOption?.values ?? [];
+  const hasSizes = sizeValues.length > 0;
+
+  const variantForSize = (value: string) =>
+    variants.find(v =>
+      v.selectedOptions.some(o => o.name === sizeOption?.name && o.value === value)
+    );
+
+  const selectedVariant = hasSizes
+    ? (size ? variantForSize(size) : undefined)
+    : variants[0];
+
   const categoryHandle = product.collections.edges[0]?.node.handle ?? '';
   const displayPrice = selectedVariant
     ? formatMXN(selectedVariant.price.amount)
@@ -46,10 +63,12 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
 
   function handleAdd() {
     if (!selectedVariant) {
-      sizeRowRef.current?.animate(
-        [{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'translateX(0)' }],
-        { duration: 280 }
-      );
+      if (hasSizes) {
+        sizeRowRef.current?.animate(
+          [{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'translateX(0)' }],
+          { duration: 280 }
+        );
+      }
       return;
     }
     addToCart(selectedVariant.id);
@@ -147,37 +166,43 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
               </p>
 
               {/* Size selector */}
-              <div ref={sizeRowRef} className="mb-7">
-                <div className="flex justify-between items-baseline mb-2.5">
-                  <div className="font-mono text-[10.5px] tracking-[0.22em] uppercase text-stone">
-                    Talla {size && <span className="text-sumi">· {size}</span>}
+              {hasSizes && (
+                <div ref={sizeRowRef} className="mb-7">
+                  <div className="flex justify-between items-baseline mb-2.5">
+                    <div className="font-mono text-[10.5px] tracking-[0.22em] uppercase text-stone">
+                      {sizeOption?.name ?? 'Talla'} {size && <span className="text-sumi">· {size}</span>}
+                    </div>
+                    <a href="/" className="font-mono text-[10px] tracking-[0.22em] uppercase text-slate underline">Guía de tallas</a>
                   </div>
-                  <a href="/" className="font-mono text-[10px] tracking-[0.22em] uppercase text-slate underline">Guía de tallas</a>
+                  <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${sizeValues.length}, 1fr)` }}>
+                    {sizeValues.map(value => {
+                      const variant = variantForSize(value);
+                      const available = variant?.availableForSale ?? false;
+                      return (
+                        <button
+                          key={value}
+                          onClick={() => available && setSize(value)}
+                          disabled={!available}
+                          className={`py-3.5 font-mono text-[11px] tracking-[0.18em] uppercase transition-all duration-150 border ${
+                            !available
+                              ? 'bg-transparent text-stone border-linen line-through cursor-not-allowed'
+                              : size === value
+                                ? 'bg-sumi text-paper border-sumi cursor-pointer'
+                                : 'bg-transparent text-sumi border-ash cursor-pointer'
+                          }`}
+                        >
+                          {value}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${variants.length}, 1fr)` }}>
-                  {variants.map(v => (
-                    <button
-                      key={v.id}
-                      onClick={() => v.availableForSale && setSize(v.title)}
-                      disabled={!v.availableForSale}
-                      className={`py-3.5 font-mono text-[11px] tracking-[0.18em] uppercase transition-all duration-150 border ${
-                        !v.availableForSale
-                          ? 'bg-transparent text-stone border-linen line-through cursor-not-allowed'
-                          : size === v.title
-                            ? 'bg-sumi text-paper border-sumi cursor-pointer'
-                            : 'bg-transparent text-sumi border-ash cursor-pointer'
-                      }`}
-                    >
-                      {v.title}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              )}
 
               <Button size="lg" full onClick={handleAdd} disabled={loading}>
                 {loading
                   ? 'Agregando...'
-                  : size
+                  : selectedVariant
                     ? `Agregar a la bolsa · ${displayPrice}`
                     : 'Elige una talla'}
               </Button>
