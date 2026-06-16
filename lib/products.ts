@@ -1,10 +1,11 @@
-import type { ShopifyCollection } from './shopify';
+import type { ShopifyCollection, ShopifyProduct } from './shopify';
 
 export interface Category {
   id: string;
   label: string;
   count: number;
   blurb: string;
+  featuredImage?: string;
 }
 
 // Curated set: defines which collections are surfaced, their order, and the
@@ -20,11 +21,19 @@ export const MULAN_CATEGORIES: Category[] = [
 // collection handle. Label and blurb stay curated (editorial, Spanish — the
 // Shopify title may differ, e.g. "Active Wear" for the `deportivo` handle). A
 // curated category with no matching collection falls back to its static values.
-export function toCategories(collections: ShopifyCollection[]): Category[] {
+export function toCategories(collections: ShopifyCollection[], products: ShopifyProduct[] = []): Category[] {
   const byHandle = new Map(collections.map(c => [c.handle, c]));
   return MULAN_CATEGORIES.map(cat => {
     const live = byHandle.get(cat.id);
-    return live ? { ...cat, count: live.productCount } : cat;
+    const representative = products.find(p =>
+      p.collections.edges.some(e => e.node.handle === cat.id)
+    );
+    const featuredImage = representative?.images.edges[0]?.node.url;
+    return {
+      ...cat,
+      ...(live ? { count: live.productCount } : {}),
+      ...(featuredImage ? { featuredImage } : {}),
+    };
   });
 }
 

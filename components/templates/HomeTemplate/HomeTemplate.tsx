@@ -7,11 +7,14 @@ import type { ShopifyProduct } from '@/lib/shopify';
 import HeroEditorial from '@/components/organisms/Hero/HeroEditorial';
 import HeroSplit from '@/components/organisms/Hero/HeroSplit';
 import HeroArchitectural from '@/components/organisms/Hero/HeroArchitectural';
+import MarqueeBand from '@/components/organisms/MarqueeBand/MarqueeBand';
+import CategoryCard from '@/components/molecules/CategoryCard/CategoryCard';
 import ImagePlaceholder from '@/components/atoms/ImagePlaceholder/ImagePlaceholder';
 import ProductCard from '@/components/molecules/ProductCard/ProductCard';
 import SectionHeader from '@/components/molecules/SectionHeader/SectionHeader';
 import VerticalEyebrow from '@/components/atoms/VerticalEyebrow/VerticalEyebrow';
-import Seal from '@/components/atoms/Seal/Seal';
+import NosotrasSection from '@/components/organisms/NosotrasSection/NosotrasSection';
+import PhilosophySection from '@/components/organisms/PhilosophySection/PhilosophySection';
 import NewsletterForm from '@/components/molecules/NewsletterForm/NewsletterForm';
 
 interface HomeTemplateProps {
@@ -30,26 +33,7 @@ export default function HomeTemplate({ featuredProducts, categories = MULAN_CATE
       {heroVariant === 'B' && <HeroSplit />}
       {heroVariant === 'C' && <HeroArchitectural />}
 
-      {/* Marquee */}
-      <section className="bg-sumi text-white py-5 overflow-hidden border-b border-slate">
-        <div
-          className="flex gap-[60px] font-display text-[18px] italic whitespace-nowrap md:text-[22px]"
-          style={{ animation: 'mulanMarquee 30s linear infinite' }}
-        >
-          {Array.from({ length: 4 }).map((_, i) => (
-            <span key={i} className="inline-flex gap-[60px]">
-              <span>Hecho lento en CDMX</span>
-              <span className="text-ash">·</span>
-              <span className="font-body">M · S</span>
-              <span className="text-ash">·</span>
-              <span>Lote 04 — Primavera 26</span>
-              <span className="text-ash">·</span>
-              <span>Envíos a todo México</span>
-              <span className="text-ash">·</span>
-            </span>
-          ))}
-        </div>
-      </section>
+      <MarqueeBand />
 
       {/* Categorías */}
       <section className="px-5 py-16 relative md:px-12 md:pt-[120px] md:pb-20">
@@ -58,27 +42,13 @@ export default function HomeTemplate({ featuredProducts, categories = MULAN_CATE
           <SectionHeader eyebrow="Tienda" title="Tres ritmos del día" side="Para moverse · para estar · para presentarse" />
           <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${compact ? 'gap-3' : 'gap-6'}`}>
             {categories.map((cat, i) => (
-              <Link key={cat.id} href={`/tienda?cat=${cat.id}`} className="no-underline text-inherit block relative">
-                <div className="relative mb-4 overflow-hidden">
-                  <ImagePlaceholder ratio="4/5" label={cat.label.toUpperCase()} tone={i === 1 ? 'dark' : 'light'} />
-<div className={`absolute top-4 left-4 font-mono text-[10px] tracking-[0.22em] ${i === 1 ? 'text-white' : 'text-sumi'}`}>
-                    {String(i + 1).padStart(2, '0')} / {String(categories.length).padStart(2, '0')}
-                  </div>
-                </div>
-                <div className="flex justify-between items-baseline">
-                  <div>
-                    <h3 className="m-0 font-display text-[28px] font-normal tracking-[-0.01em] md:text-[32px]">{cat.label}</h3>
-                    <p className="m-0 mt-1.5 font-body italic text-[14px] text-slate">{cat.blurb}</p>
-                  </div>
-                  <span className="font-mono text-[10px] tracking-[0.22em] text-stone shrink-0 ml-4">{cat.count} piezas →</span>
-                </div>
-              </Link>
+              <CategoryCard key={cat.id} category={cat} index={i} total={categories.length} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Editorial block */}
+      {/* Editorial · Materiales */}
       <section className="px-5 py-16 relative md:px-12 md:py-20">
         <VerticalEyebrow side="right" top={80}>02 · Materiales</VerticalEyebrow>
         <div className="max-w-[1280px] mx-auto grid grid-cols-1 gap-12 items-center lg:grid-cols-2 lg:gap-14">
@@ -88,17 +58,14 @@ export default function HomeTemplate({ featuredProducts, categories = MULAN_CATE
               Algodón, lana,<br /><em className="font-light">lino, seda.</em><br /><span className="text-stone">Nada más.</span>
             </h2>
             <p className="font-body text-[16px] leading-[1.65] text-slate max-w-[460px] mb-5">
-              Trabajamos con fibras naturales y un par de sintéticos reciclados. Todo se piensa para durar. Todo se nombra: dónde se hizo, quién lo cortó, en qué lote.
+              Trabajamos con fibras que se sienten como una segunda piel. Todo pensado en acompañarte siempre, desde el gym, eventos hasta esa escapada para desconectar.
             </p>
             <p className="font-body italic text-[16px] leading-[1.65] text-stone max-w-[460px] mb-9">
-              — Si una prenda no envejece con dignidad, no la hacemos.
+              — Dejanos acompanarte cada día, en cada momento.
             </p>
-            <a href="/" className="font-mono text-[11px] tracking-[0.28em] uppercase text-sumi no-underline border-b border-sumi pb-1">
-              Leer sobre el taller →
-            </a>
           </div>
           <div className="relative">
-            <ImagePlaceholder ratio="4/5" label="DETALLE TELAR" tone="dark" seal sealChar="S" />
+            <ImagePlaceholder ratio="4/5" label="DETALLE TELAR" tone="dark" seal sealChar="S" src="/materiales-textura.jpg" objectPosition="center center" />
             <div className="absolute -bottom-5 -left-5 bg-paper px-4 py-3 font-mono text-[10px] tracking-[0.18em] text-sumi border border-linen">
               LOTE · 04 / 008
             </div>
@@ -122,86 +89,9 @@ export default function HomeTemplate({ featuredProducts, categories = MULAN_CATE
         </div>
       </section>
 
-      {/* Nosotras */}
-      <section className="px-5 py-16 relative md:px-12 md:py-[120px]">
-        <VerticalEyebrow side="right" top={120}>04 · Nosotras</VerticalEyebrow>
-        <div className="max-w-[1280px] mx-auto">
-          <div className="grid grid-cols-1 gap-12 items-start lg:grid-cols-[1fr_420px] lg:gap-16">
-            <div>
-              <div className="font-mono text-[10.5px] tracking-[0.25em] uppercase text-stone mb-6">04 · Nosotras</div>
-              <h2 className="m-0 font-display text-[40px] leading-[1.02] font-normal tracking-[-0.018em] text-sumi mb-7 md:text-[56px]">
-                Una comunidad.<br /><em className="font-light">Un nombre.</em><br /><span className="text-stone">Una marca.</span>
-              </h2>
-              <p className="font-body text-[16px] leading-[1.65] text-slate max-w-[520px] mb-5 text-justify">
-                Seleccionamos cada prenda pensando en realzar la personalidad y el estilo único de cada mujer. Cada prenda fue elegida pensando en mujeres que hacen lo mismo — que toman lo que son, completamente, y lo usan como fuerza. 
-                <br />
-                Porque florecer no es convertirte en lo que otros esperan de ti. Es aparecer, exactamente como eres.
-              </p>
-              <p className="font-body italic text-[16px] leading-[1.65] text-stone max-w-[500px] mb-10">
-                — Mulan: magnolia. Florece en invierno, sola, antes de que nadie lo espere.
-              </p>
-              <div className="flex items-center gap-6 mb-10 font-mono text-[10px] tracking-[0.22em] text-stone">
-                <span>2021 · To The Line</span>
-                <span className="w-8 h-px bg-ash inline-block" />
-                <span>2024 · Mulan Shop</span>
-              </div>
-              <a href="/nosotras" className="font-mono text-[11px] tracking-[0.28em] uppercase text-sumi no-underline border-b border-sumi pb-1">
-                Leer la historia completa →
-              </a>
-              <div className="mt-14 flex items-center gap-3.5">
-                <Seal size={36} char="X" />
-                <div>
-                  <div className="font-display text-[16px]">Ximena Vargas</div>
-                  <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-stone">Fundadora · Mulan Shop · CDMX</div>
-                </div>
-              </div>
-            </div>
-            <div className="relative">
-              <ImagePlaceholder ratio="3/4" label="XIMENA VARGAS" tone="dark" seal sealChar="X" src="/ximena-vargas.jpg" objectPosition="center top" />
-              <div className="absolute -bottom-5 -right-5 bg-paper px-4 py-3 font-mono text-[10px] tracking-[0.18em] text-sumi border border-linen">
-                CDMX · DESDE 2021
-              </div>
-            </div>
-          </div>
-          <div className="mt-20 pt-10 border-t border-ash/50 grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-ash/50">
-            <div className="py-8 sm:pr-8">
+      <NosotrasSection />
 
-              <div className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-stone mb-3">Fuerza</div>
-              <p className="m-0 font-body italic text-[15px] leading-[1.6] text-slate">Lo que alguien lanzó como inseguridad se convirtió en el rasgo más nuestro que tenemos.</p>
-            </div>
-            <div className="py-8 sm:px-8">
-
-              <div className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-stone mb-3">Feminidad</div>
-              <p className="m-0 font-body italic text-[15px] leading-[1.6] text-slate">Prendas pensadas para cada mujer que se mueve, que está y que se presenta completamente.</p>
-            </div>
-            <div className="py-8 sm:pl-8">
-
-              <div className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-stone mb-3">Intención</div>
-              <p className="m-0 font-body italic text-[15px] leading-[1.6] text-slate">Cada pieza elegida con propósito: para que quien la lleve aparezca exactamente como es.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Philosophy */}
-      <section className="px-5 py-16 bg-linen relative overflow-hidden md:px-12 md:py-[120px]">
-        <div className="absolute top-1/2 -translate-y-1/2 -right-20 font-display leading-[0.85] text-ash opacity-35 pointer-events-none font-normal text-[280px] md:text-[520px]">
-          Mulan Shop
-        </div>
-        <div className="max-w-[900px] mx-auto relative">
-          <div className="font-mono text-[10.5px] tracking-[0.25em] uppercase text-stone mb-6">Filosofía · 05</div>
-          <blockquote className="m-0 font-display text-[32px] leading-[1.05] font-light tracking-[-0.015em] text-sumi md:text-[64px]">
-            <em>"</em>Florecer no es convertirte en lo que otros esperan de ti. Es aparecer, exactamente como eres.<em>"</em>
-          </blockquote>
-          <div className="mt-9 flex items-center gap-3.5">
-            <Seal size={36} char="M" />
-            <div>
-              <div className="font-display text-[16px]">Ximena Vargas</div>
-              <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-stone">Fundadora · CDMX</div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PhilosophySection />
 
       {/* Newsletter */}
       <section className="px-5 py-16 text-center md:px-12 md:py-24">

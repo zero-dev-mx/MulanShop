@@ -13,7 +13,7 @@ export default async function HomePage() {
   return (
     <HomeTemplate
       featuredProducts={products.slice(0, 4)}
-      categories={toCategories(collections)}
+      categories={toCategories(collections, products)}
     />
   );
 }
