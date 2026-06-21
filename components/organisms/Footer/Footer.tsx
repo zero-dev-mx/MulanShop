@@ -59,7 +59,7 @@ export default function Footer() {
             Mulan Shop
           </div>
           <div className="font-body text-[14px] text-ash max-w-xs mb-6 align-justify">
-            Una marca pequeña, hecha en México. Elegimos prendas que se convierten en tus favoritas, las que buscas primero, las que te salvan, las que repites. Por que te hacen sentir increible
+            Una marca pequeña, hecha en México. Elegimos prendas que se convierten en tus favoritas, las que buscas primero, las que te salvan, las que repites. Porque te hacen sentir increíble.
           </div>
           <div className="flex gap-4">
             {socials.map(({ label, href, icon }) => (

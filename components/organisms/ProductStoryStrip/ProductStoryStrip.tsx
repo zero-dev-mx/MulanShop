@@ -85,7 +85,7 @@ export default function ProductStoryStrip({
               Nuestra comunidad · {productType}
             </div>
             <h3 className="m-0 font-display text-[32px] leading-[1.05] font-normal tracking-[-0.015em] text-sumi md:text-[44px]">
-              Lo que mas<br /><em className="font-light">nos enorgullece</em>
+              Lo que más<br /><em className="font-light">nos enorgullece</em>
             </h3>
             <p className="mt-7 mb-0 font-body text-[16px] leading-[1.65] text-slate max-w-[440px]">
               {body}

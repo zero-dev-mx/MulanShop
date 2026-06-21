@@ -191,7 +191,7 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
                   {displayPrice}
                 </span>
                 <span className="font-mono text-[10px] tracking-[0.22em] uppercase text-stone">
-                  ó 3 mensualidades · sin interés
+                  o 3 mensualidades · sin interés
                 </span>
               </div>
 
@@ -281,7 +281,7 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
       {related.length > 0 && (
         <section className="px-5 py-16 md:px-12 md:pt-20 md:pb-10">
           <div className="max-w-[1280px] mx-auto">
-            <SectionHeader eyebrow="También en esta temporada" title="Piezas que conviven bien" side="Y tambien nos encantan" />
+            <SectionHeader eyebrow="También en esta temporada" title="Piezas que conviven bien" side="Y también nos encantan" />
             <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
               {related.map(p => <ProductCard key={p.handle} product={p} density={tweaks.density} />)}
             </div>

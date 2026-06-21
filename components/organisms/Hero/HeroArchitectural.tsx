@@ -73,7 +73,7 @@ export default function HeroArchitectural({ products = [] }: HeroArchitecturalPr
             </Link>
           ))}
           <p className="m-0 font-body italic text-[16px] leading-[1.6] text-black">
-            Seleccionamos las prendas a las que volveras
+            Seleccionamos las prendas a las que volverás
           </p>
         </div>
       </div>
