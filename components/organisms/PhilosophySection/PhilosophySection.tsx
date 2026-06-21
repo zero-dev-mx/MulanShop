@@ -9,12 +9,13 @@ export default function PhilosophySection() {
       <div className="max-w-[900px] mx-auto relative">
         <div className="font-mono text-[10.5px] tracking-[0.25em] uppercase text-stone mb-6">Filosofía · 05</div>
         <blockquote className="m-0 font-display text-[32px] leading-[1.05] font-light tracking-[-0.015em] text-sumi md:text-[64px]">
-          <em>"</em>Florecer no es convertirte en lo que otros esperan de ti. Es aparecer, exactamente como eres.<em>"</em>
+          <em>"</em>Florecer no es convertirte en lo que otros esperan de ti. Es aparecer, exactamente como eres<em>"</em> — Mulan Shop elegancia que florece.
+          
         </blockquote>
         <div className="mt-9 flex items-center gap-3.5">
-          <Seal size={36} char="M" />
+          <Seal size={36} char="MS" />
           <div>
-            <div className="font-display text-[16px]">Ximena Vargas</div>
+            <div className="font-display text-[16px]">Ximena</div>
             <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-stone">Fundadora · CDMX</div>
           </div>
         </div>

@@ -4,7 +4,7 @@ import { searchProducts } from '@/lib/queries';
 import SearchTemplate from '@/components/templates/SearchTemplate/SearchTemplate';
 
 export const metadata: Metadata = {
-  title: 'Buscar · Mulán',
+  title: 'Buscar · Mulan',
 };
 
 interface PageProps {

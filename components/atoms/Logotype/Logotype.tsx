@@ -34,14 +34,14 @@ export default function Logotype({ variant = 'wordmark', size = 24, color = '#11
           background: '#111111', color: '#f2ede4',
           fontSize: size * 0.85, fontWeight: 500,
         }}>M</span>
-        <span style={{ fontSize: size * 0.7, letterSpacing: '0.18em', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', fontWeight: 400 }}>Mulán Shop</span>
+        <span style={{ fontSize: size * 0.7, letterSpacing: '0.18em', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', fontWeight: 400 }}>Mulan Shop</span>
       </span>
     );
   }
 
   return (
     <span style={{ ...baseStyle, fontSize: size }}>
-      Mulán Shop
+      Mulan Shop
       <span style={{ color: '#7a2a20', fontFamily: 'var(--font-body)', fontSize: size * 0.7, marginLeft: 1 }}>·</span>
     </span>
   );

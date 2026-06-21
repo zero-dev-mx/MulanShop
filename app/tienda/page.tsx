@@ -5,7 +5,7 @@ import { toCategories } from '@/lib/products';
 import CollectionTemplate from '@/components/templates/CollectionTemplate/CollectionTemplate';
 
 export const metadata: Metadata = {
-  title: 'Tienda · Mulán',
+  title: 'Tienda · Mulan',
   description: 'Doce piezas, hechas a mano en CDMX. Cuando se acaben, se acaban.',
 };
 

@@ -13,6 +13,7 @@ import VerticalEyebrow from '@/components/atoms/VerticalEyebrow/VerticalEyebrow'
 import Button from '@/components/atoms/Button/Button';
 import Seal from '@/components/atoms/Seal/Seal';
 import Lightbox from '@/components/organisms/Lightbox/Lightbox';
+import ProductStoryStrip from '@/components/organisms/ProductStoryStrip/ProductStoryStrip';
 
 interface ProductTemplateProps {
   product: ShopifyProduct;
@@ -276,46 +277,18 @@ export default function ProductTemplate({ product, related }: ProductTemplatePro
           </div>
         </div>
       </section>
-
-      {/* Story strip */}
-      <section className="bg-linen px-5 py-16 relative overflow-hidden md:px-12 md:py-20">
-        <div className="max-w-[1280px] mx-auto grid grid-cols-1 gap-12 items-center relative lg:grid-cols-2 lg:gap-14">
-          <div>
-            <div className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-stone mb-4">
-              La historia · {product.productType}
-            </div>
-            <h3 className="m-0 font-display text-[32px] leading-[1.05] font-normal tracking-[-0.015em] text-sumi md:text-[44px]">
-              Cómo se<br /><em className="font-light">llegó aquí.</em>
-            </h3>
-            <p className="mt-7 mb-0 font-body text-[16px] leading-[1.65] text-slate max-w-[480px]">
-              Cortada y cosida en CDMX por un taller de seis manos. Tela natural, costura francesa, botonadura a mano. La etiqueta lleva el nombre de quien la hizo.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-8 font-mono text-[10.5px] tracking-[0.18em] uppercase text-stone">
-              {[{ n: '06', label: 'Manos involucradas' }, { n: '04', label: 'Lote actual' }, { n: '12', label: 'Piezas hechas' }].map(stat => (
-                <div key={stat.label}>
-                  <div className="text-sumi font-display text-[26px] mb-1 tracking-normal">{stat.n}</div>
-                  <div>{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div>
-            <ImagePlaceholder ratio="5/6" label="DETALLE · TELAR" tone="dark" seal sealChar="S" />
-          </div>
-        </div>
-      </section>
-
       {/* Related */}
       {related.length > 0 && (
         <section className="px-5 py-16 md:px-12 md:pt-20 md:pb-10">
           <div className="max-w-[1280px] mx-auto">
-            <SectionHeader eyebrow="También en este lote" title="Piezas que conviven bien" side={`Otras de ${categoryHandle}`} />
+            <SectionHeader eyebrow="También en esta temporada" title="Piezas que conviven bien" side="Y tambien nos encantan" />
             <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
               {related.map(p => <ProductCard key={p.handle} product={p} density={tweaks.density} />)}
             </div>
           </div>
         </section>
       )}
+      <ProductStoryStrip productType={product.productType} />
 
       {lightboxOpen && canZoom && (
         <Lightbox

@@ -122,7 +122,7 @@ export default function TweaksPanel() {
               value={tweaks.logoVariant}
               onChange={v => setTweak('logoVariant', v as LogoVariant)}
               options={[
-                { value: 'wordmark', label: 'Wordmark · Mulán' },
+                { value: 'wordmark', label: 'Wordmark · Mulan' },
                 { value: 'monogram', label: 'Monograma · M' },
                 { value: 'seal',     label: 'Sello · M + texto' },
               ]}

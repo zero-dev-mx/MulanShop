@@ -13,10 +13,9 @@
   --color-seal: #7A2A20;
 
   /* Fonts — vars injected on <html> by next/font */
-  --font-display: var(--font-noto-display);
-  --font-body: var(--font-noto-body);
-  --font-mono: var(--font-noto-mono);
-  --font-cjk: 'Noto Serif SC', 'Noto Serif', Georgia, serif;
+  --font-display: var(--font-baskerville);
+  --font-body: var(--font-baskerville);
+  --font-mono: var(--font-mono);
 }
 
 html {
@@ -26,16 +25,12 @@ html {
 body {
   background: var(--mulan-bg, var(--color-bg));
   color: var(--color-sumi);
-  font-family: var(--font-body), Georgia, serif;
+  font-family: var(--font-body), 'Baskerville', Georgia, serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-/* Applied to any element that must render CJK strokes through Noto Serif SC */
-.cjk {
-  font-family: var(--font-cjk);
-}
 
 @keyframes mulanMarquee {
   from { transform: translateX(0); }

@@ -38,7 +38,7 @@ export default function NosotrasSection() {
             <div className="mt-14 flex items-center gap-3.5">
               <Seal size={36} char="X" />
               <div>
-                <div className="font-display text-[16px]">Ximena Vargas</div>
+                <div className="font-display text-[16px]">Ximena</div>
                 <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-stone">Fundadora · Mulan Shop · CDMX</div>
               </div>
             </div>

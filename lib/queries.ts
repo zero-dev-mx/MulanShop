@@ -78,7 +78,7 @@ export async function getProductByHandle(handle: string): Promise<ShopifyProduct
 export async function getProductsByCollection(collectionHandle: string): Promise<ShopifyProduct[]> {
   const { data, errors } = await shopifyClient.request(`
     query CollectionProducts($handle: String!) {
-      collectionByHandle(handle: $handle) {
+      collection(handle: $handle) {
         products(first: 50) {
           edges { node { ${PRODUCT_FRAGMENT} } }
         }
@@ -86,7 +86,7 @@ export async function getProductsByCollection(collectionHandle: string): Promise
     }
   `, { variables: { handle: collectionHandle } });
   if (errors) throw new Error(JSON.stringify(errors));
-  return data.collectionByHandle?.products.edges.map(
+  return data.collection?.products.edges.map(
     (e: { node: ShopifyProduct }) => e.node
   ) ?? [];
 }

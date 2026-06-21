@@ -7,11 +7,11 @@ export default function MarqueeBand() {
       >
         {Array.from({ length: 4 }).map((_, i) => (
           <span key={i} className="inline-flex gap-[60px]">
-            <span>Hecho lento en CDMX</span>
+            <span>Recibe en 3-5 dias habiles</span>
             <span className="text-ash">·</span>
-            <span className="font-body">M · S</span>
+            <span className="font-body">Devoluciones faciles</span>
             <span className="text-ash">·</span>
-            <span>Lote 04 — Primavera 26</span>
+            <span>Envio gratis desde $1,500</span>
             <span className="text-ash">·</span>
             <span>Envíos a todo México</span>
             <span className="text-ash">·</span>

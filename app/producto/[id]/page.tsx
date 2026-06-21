@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = await getProductByHandle(id);
   if (!product) return {};
   return {
-    title: `${product.title} · Mulán`,
+    title: `${product.title} · Mulan`,
     description: product.description,
   };
 }
@@ -27,7 +27,9 @@ export default async function ProductoPage({ params }: Props) {
   const product = await getProductByHandle(id);
   if (!product) notFound();
 
-  const categoryHandle = product.collections.edges[0]?.node.handle;
+  const categoryHandle = product.collections.edges
+    .map(e => e.node.handle)
+    .find(h => h !== 'frontpage');
   const related = categoryHandle
     ? (await getProductsByCollection(categoryHandle))
         .filter(p => p.handle !== product.handle)

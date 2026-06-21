@@ -13,7 +13,7 @@ const customFetchApi: CustomFetchApi | undefined =
 
 export const shopifyClient = createStorefrontApiClient({
   storeDomain: process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN!,
-  apiVersion: '2025-04',
+  apiVersion: '2026-04',
   publicAccessToken: process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN!,
   customFetchApi,
 });

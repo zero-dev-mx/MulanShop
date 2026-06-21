@@ -1,13 +1,28 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import ImagePlaceholder from '@/components/atoms/ImagePlaceholder/ImagePlaceholder';
+import type { ShopifyProduct } from '@/lib/shopify';
 
-const items = [
-  { lbl: 'JUMPSUIT · 01', t: 'light' as const, src: '/products/jumpsuit-oliva.jpg' },
-  { lbl: 'SET · 02',      t: 'dark'  as const, src: '/products/set-piedra.jpg' },
-  { lbl: 'VESTIDO · 09',  t: 'light' as const },
-];
+interface HeroArchitecturalProps {
+  products?: ShopifyProduct[];
+}
 
-export default function HeroArchitectural() {
+const TONES: ('light' | 'dark')[] = ['light', 'dark', 'light'];
+
+export default function HeroArchitectural({ products = [] }: HeroArchitecturalProps) {
+  const items = products.slice(0, 3).map((p, i) => ({
+    lbl: `${(p.productType || p.title).toUpperCase()} · ${String(i + 1).padStart(2, '0')}`,
+    t: TONES[i],
+    src: p.images.edges[0]?.node.url ?? null,
+    title: p.title,
+    handle: p.handle,
+    price: new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: p.priceRange.minVariantPrice.currencyCode,
+      minimumFractionDigits: 0,
+    }).format(Number(p.priceRange.minVariantPrice.amount)),
+  }));
+
   return (
     <section className="relative min-h-[92vh] px-5 pt-10 pb-0 overflow-hidden md:px-12">
       {/* CDMX skyline — full-bleed backdrop */}
@@ -39,25 +54,27 @@ export default function HeroArchitectural() {
         <div className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-stone">26 · 05 · 2026</div>
       </div>
 
-
       <div className="absolute bottom-8 left-5 right-5 md:left-12 md:right-12 flex flex-col gap-4">
-        <p className="m-0 font-body italic text-[16px] leading-[1.6] text-black">
-          Doce piezas, doce nombres, doce historias. Cuando se acaben, se acaban.
-        </p>
         <div className="grid grid-cols-3 gap-3 md:gap-6">
-        {items.map((it, i) => (
-          <div key={i} className="flex gap-2 items-end md:gap-3.5">
-            <div className="w-14 shrink-0 md:w-[88px]">
-              <ImagePlaceholder ratio="3/4" label={it.lbl} tone={it.t} src={it.src ?? null} />
-            </div>
-            <div className="pb-1.5 hidden sm:block">
-              <div className="font-display text-[15px] leading-[1.1] md:text-[17px]">Pieza 0{i * 4 + 2}</div>
-              <div className="font-mono text-[9.5px] tracking-[0.18em] text-stone mt-[3px]">
-                {it.lbl.split(' · ')[0]}
+          {items.map((it) => (
+            <Link key={it.handle} href={`/producto/${it.handle}`} className="flex gap-2 items-end md:gap-3.5 no-underline group">
+              <div className="w-14 shrink-0 md:w-[88px]">
+                <ImagePlaceholder ratio="3/4" label={it.lbl} tone={it.t} src={it.src} />
               </div>
-            </div>
-          </div>
-        ))}
+              <div className="pb-1.5 hidden sm:block">
+                <div className="font-display text-[15px] leading-[1.1] md:text-[17px] group-hover:opacity-70 transition-opacity">{it.title}</div>
+                <div className="font-mono text-[9.5px] tracking-[0.18em] text-stone mt-[3px]">
+                  {it.lbl.split(' · ')[0]}
+                </div>
+                <div className="font-mono text-[9.5px] tracking-[0.18em] text-sumi mt-[2px]">
+                  {it.price}
+                </div>
+              </div>
+            </Link>
+          ))}
+          <p className="m-0 font-body italic text-[16px] leading-[1.6] text-black">
+            Seleccionamos las prendas a las que volveras
+          </p>
         </div>
       </div>
     </section>

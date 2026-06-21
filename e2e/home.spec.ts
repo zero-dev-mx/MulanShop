@@ -3,7 +3,7 @@ import { test, expect } from './fixtures';
 test('home page renders featured products and primary nav', async ({ page }) => {
   await page.goto('/');
 
-  await expect(page).toHaveTitle(/Mulán/);
+  await expect(page).toHaveTitle(/Mulan/);
 
   // Featured products come from the (mocked) storefront.
   await expect(page.getByText('Top Marea').first()).toBeVisible();
