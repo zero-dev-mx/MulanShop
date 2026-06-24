@@ -4,12 +4,14 @@ import ProductStoryStrip from './ProductStoryStrip';
 describe('ProductStoryStrip', () => {
   it('renders the product type in the eyebrow', () => {
     render(<ProductStoryStrip productType="Blusa" />);
-    expect(screen.getByText(/La historia · Blusa/i)).toBeInTheDocument();
+    expect(screen.getByText(/Nuestra comunidad · Blusa/i)).toBeInTheDocument();
   });
 
   it('renders default body copy when none is provided', () => {
     render(<ProductStoryStrip productType="Blusa" />);
-    expect(screen.getByText(/Cortada y cosida en CDMX/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Nuestra comunidad crece con cada producto/),
+    ).toBeInTheDocument();
   });
 
   it('renders custom body copy', () => {
@@ -19,9 +21,9 @@ describe('ProductStoryStrip', () => {
 
   it('renders default stats', () => {
     render(<ProductStoryStrip productType="Blusa" />);
-    expect(screen.getByText('Manos involucradas')).toBeInTheDocument();
-    expect(screen.getByText('Lote actual')).toBeInTheDocument();
-    expect(screen.getByText('Piezas hechas')).toBeInTheDocument();
+    expect(screen.getByText('Prendas en la temporada')).toBeInTheDocument();
+    expect(screen.getByText('Categorías')).toBeInTheDocument();
+    expect(screen.getByText('Mujeres en nuestra comunidad')).toBeInTheDocument();
   });
 
   it('renders custom stats', () => {
@@ -31,14 +33,25 @@ describe('ProductStoryStrip', () => {
     expect(screen.getByText('10')).toBeInTheDocument();
   });
 
-  it('renders placeholder slots when no images are provided', () => {
-    render(<ProductStoryStrip productType="Blusa" />);
-    expect(screen.getByText('[ DETALLE · 01 ]')).toBeInTheDocument();
-  });
-
   it('renders as many image slots as images provided', () => {
     const images = ['https://example.com/a.jpg', 'https://example.com/b.jpg'];
     render(<ProductStoryStrip productType="Blusa" images={images} />);
     expect(screen.getAllByRole('img')).toHaveLength(2);
+  });
+
+  it('renders a video element for video sources and images for the rest', () => {
+    const images = ['/community/community-01.webp', '/community/community-video.mp4'];
+    const { container } = render(
+      <ProductStoryStrip productType="Blusa" images={images} />,
+    );
+    expect(screen.getAllByRole('img')).toHaveLength(1);
+    const video = container.querySelector('video');
+    expect(video).toBeInTheDocument();
+    expect(video).toHaveAttribute('poster', '/community/community-video-poster.webp');
+  });
+
+  it('includes the community video in the default strip', () => {
+    const { container } = render(<ProductStoryStrip productType="Blusa" />);
+    expect(container.querySelector('video')).toBeInTheDocument();
   });
 });

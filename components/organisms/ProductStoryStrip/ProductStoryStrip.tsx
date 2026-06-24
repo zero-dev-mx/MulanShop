@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import ImagePlaceholder from '@/components/atoms/ImagePlaceholder/ImagePlaceholder';
+import Seal from '@/components/atoms/Seal/Seal';
 
 interface Stat {
   n: string;
@@ -24,12 +25,18 @@ const DEFAULT_STATS: Stat[] = [
   { n: '23', label: 'Mujeres en nuestra comunidad' },
 ];
 
-const DEFAULT_IMAGES = [
-  '/community-1.png',
-  '/community-2.png',
-  '/community-1.png',
-  '/community-2.png',
-];
+const COMMUNITY_VIDEO = '/community/community-video.mp4';
+
+const COMMUNITY_IMAGES = Array.from(
+  { length: 28 },
+  (_, i) => `/community/community-${String(i + 1).padStart(2, '0')}.webp`,
+);
+
+// The clip leads the strip, followed by the community photo set.
+const DEFAULT_IMAGES = [COMMUNITY_VIDEO, ...COMMUNITY_IMAGES];
+
+const isVideo = (src: string) => /\.(mp4|webm|mov)$/i.test(src);
+const posterFor = (src: string) => src.replace(/\.(mp4|webm|mov)$/i, '-poster.webp');
 
 export default function ProductStoryStrip({
   productType,
@@ -116,14 +123,33 @@ export default function ProductStoryStrip({
           >
           {slots.map(({ src, i }) => (
             <div key={i} className="snap-start shrink-0 w-[78%] sm:w-[55%] lg:w-[48%]">
-              <ImagePlaceholder
-                ratio="auto"
-                label={`DETALLE · ${String(i + 1).padStart(2, '0')}`}
-                tone={i % 2 === 0 ? 'dark' : 'light'}
-                seal
-                sealChar="MS"
-                src={src}
-              />
+              {isVideo(src) ? (
+                <div className="relative h-full min-h-full w-full overflow-hidden bg-sumi">
+                  <video
+                    className="absolute inset-0 h-full w-full object-cover"
+                    src={src}
+                    poster={posterFor(src)}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    aria-label={`COMUNIDAD · ${String(i + 1).padStart(2, '0')}`}
+                  />
+                  <div className="absolute top-3.5 right-3.5">
+                    <Seal size={28} color="#FFFFFF" bg="transparent" char="MS" />
+                  </div>
+                </div>
+              ) : (
+                <ImagePlaceholder
+                  ratio="auto"
+                  label={`DETALLE · ${String(i + 1).padStart(2, '0')}`}
+                  tone={i % 2 === 0 ? 'dark' : 'light'}
+                  seal
+                  sealChar="MS"
+                  src={src}
+                />
+              )}
             </div>
           ))}
           </div>
